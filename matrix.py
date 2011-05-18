@@ -1,0 +1,234 @@
+import sys
+
+class Matrix(object):
+    """
+    The text above is considered a test case.
+
+    >>> m = Matrix.from_string(6, 5, "2 3 4 5 6 5 6 8 9 1 4 4 6 7 3 6 6 3 2 3 0 4 6 3 0 3 5 1 6 99")
+    >>> for i in range(6): print(m.partition(1, 5, i))
+    [[2, 3, 4, 5, 6]]
+    [[5, 6, 8, 9, 1]]
+    [[4, 4, 6, 7, 3]]
+    [[6, 6, 3, 2, 3]]
+    [[0, 4, 6, 3, 0]]
+    [[3, 5, 1, 6, 99]]
+    >>> for i in range(15): print(m.partition(2, 1, i))
+    [[2], [5]]
+    [[3], [6]]
+    [[4], [8]]
+    [[5], [9]]
+    [[6], [1]]
+    [[4], [6]]
+    [[4], [6]]
+    [[6], [3]]
+    [[7], [2]]
+    [[3], [3]]
+    [[0], [3]]
+    [[4], [5]]
+    [[6], [1]]
+    [[3], [6]]
+    [[0], [99]]
+
+    >>> m.dump()
+    2 3 4 5 6 
+    5 6 8 9 1 
+    4 4 6 7 3 
+    6 6 3 2 3 
+    0 4 6 3 0 
+    3 5 1 6 99 
+
+    >>> row, col, proc = m.derive_partition([(0, 1), (0, 2)], 100)
+    >>> (row, col, proc)
+    (1, 2, 15)
+    >>> row, col, proc = m.derive_partition([(1, 0), (3, 0)], 100)
+    >>> (row, col, proc)
+    (3, 1, 10)
+    >>>
+
+    Test the limit
+    >>> row, col, proc = m.derive_partition([(1, 0), (3, 0)], 8)
+    >>> (row, col, proc)
+    (3, 2, 5)
+
+    >>> m = Matrix.from_string(50, 40, ' '.join([i for i in map(lambda x: str(x), range(50 *40))]))
+    >>> m.derive_partition([(-3, -2), (2, 2)], 10)
+
+    >>> m.derive_partition([(-1, -1), (2, 2), (0, -1)], 111)
+    """
+
+    def __init__(self, rows, cols, value=0):
+        self.rows, self.cols = rows, cols
+
+        self.matrix = []
+        for i in range(rows):
+            self.matrix.append([value, ] * cols)
+
+    def dump(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                sys.stdout.write("%s " % self.matrix[i][j])
+            sys.stdout.write('\n')
+
+    @staticmethod
+    def from_string(rows, cols, contents):
+        m = Matrix(rows, cols)
+        elems = map(lambda x: int(x),
+                    contents.replace("\n", " ").strip().split(" "))
+
+        for i in range(rows):
+            for j in range(cols):
+                m.matrix[i][j] = next(elems)
+        return m
+
+    @staticmethod
+    def from_list(rows, cols, contents):
+        m = Matrix(rows, cols)
+        m.matrix = contents
+        return m
+
+    def derive_partition(self, offsets, nproc):
+        """
+        This method should derive a proper partition scheme starting
+        from the offsets you pass in input
+
+        @param offsets model the dependencies you need in order to
+                       properly evaluate your function on the matrix.
+        @param nproc number of processors you have available
+        @return a tuple (rows, cols) that can be used to derive the
+                correct partition
+        """
+
+        def get_min_step(x, idx):
+            if not x: return 1
+            return x[0][idx]
+
+        row_dependent = sorted(filter(lambda x: x[0] != 0, offsets),
+                               key=lambda x: abs(x[0]), reverse=True)
+        col_dependent = sorted(filter(lambda x: x[1] != 0, offsets),
+                               key=lambda x: abs(x[1]), reverse=True)
+
+        # Now we need to get the maximum displacement element, so we
+        # sort by using abs()
+
+        #print("Offsets dependendent on rows: %s" % str(row_dependent))
+        #print("Offsets dependendent on cols: %s" % str(col_dependent))
+
+        def trivial_sol(depends, is_col=0):
+            aref, bref = self.cols, self.rows
+            if is_col == 0: aref, bref = bref, aref
+
+            astep = get_min_step(depends, is_col)
+            num = aref / astep
+
+            # Adaption in the other direction is not needed since we
+            # start from the barely minimum
+
+            while num > nproc:
+                if astep * 2 > self.cols:
+                    break
+
+                astep *= 2
+                num = int(aref / astep)
+
+            bstep = max(int(bref / (nproc - num)), 1)
+            eproc = int((aref * bref) / (bstep * astep))
+
+            while eproc > nproc:
+                bstep *= 2
+                eproc = int((aref * bref) / (bstep * astep))
+
+            return (is_col == 0) and (astep, bstep, eproc) \
+                                  or (bstep, astep, eproc)
+
+
+        # If we do not depend on rows in any way we can fully exploit
+        # the parallelism pattern and do a partition by rows.
+
+        if not row_dependent:
+            return trivial_sol(col_dependent, 1)
+        elif not col_dependent:
+            return trivial_sol(row_dependent, 0)
+
+        # Now for non-trivial partition we derive the biggest square
+        # that our offsets can derive.
+
+        targets = sorted(offsets, key=lambda x: x[0])
+
+        height = abs(targets[0][0]) + 1
+
+        if len(targets) > 1:
+            height += targets[-1][0]
+
+        targets = sorted(offsets, key=lambda x: x[1])
+
+        width = abs(targets[0][1]) + 1
+
+        if len(targets) > 1:
+            width += targets[-1][1]
+
+        print("Possible partition individuated %dx%d" % (height, width))
+
+        # Now we try to figure out how many workers we can spawn
+
+        if self.cols % width != 0:
+            self.cols += width - (self.cols % width)
+            print("Column padding required")
+
+        if self.rows % height != 0:
+            self.rows += height - (self.rows % height)
+            print("Row padding required")
+
+        print("Using a padded matrix %dx%d" % (self.rows, self.cols))
+
+        def throttle(is_width):
+            aparam, bparam = width, height
+            if not is_width: aparam, bparam = bparam, aparam
+
+            astep = aparam
+            elems = self.rows * self.cols
+
+            while (elems / (aparam * bparam)) > nproc:
+                aparam += astep
+
+                if (elems / (aparam * bparam)) < nproc:
+                    aparam -= astep
+                    break
+
+            return aparam
+
+        print("Trying to fit %d processors" % nproc)
+
+        if width <= height:
+            width = throttle(True)
+            height = throttle(False)
+        else:
+            height = throttle(False)
+            width = throttle(True)
+
+        print("Possible partition individuated %dx%d" % (height, width))
+
+        eproc = int((self.cols * self.rows) / (height * width))
+
+        return (height, width, eproc)
+
+    def partition(self, rows, cols, idx):
+        part = []
+
+        col_idx = (idx * cols)
+        row_idx = int(col_idx / self.cols) * rows
+        col_idx %= self.cols
+
+        for row in range(rows):
+            ret = []
+            for col in range(cols):
+                ret.append(self.matrix[row_idx + row][col_idx + col])
+            part.append(ret)
+
+        return Matrix.from_list(rows, cols, part)
+
+    def get(self, i, j): return self.matrix[i][j]
+    def set(self, i, j, v): self.matrix[i][j] = v
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
