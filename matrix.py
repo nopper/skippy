@@ -63,6 +63,10 @@ class Matrix(object):
         for i in range(rows):
             self.matrix.append([value, ] * cols)
 
+    def clone(self):
+        import copy
+        return copy.deepcopy(self)
+
     def dump(self):
         for i in range(self.rows):
             for j in range(self.cols):

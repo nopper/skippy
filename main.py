@@ -15,8 +15,18 @@ def main():
 0 4 6 3 0 7
 3 5 1 6 99 1""")
 
-    st = Stencil(min, ((-1,0), (0,-1), (0,1), (1,0)))
-    st.apply(m)
+    #st = Stencil(min, ((-1,0), (0,-1), (0,1), (1,0)))
+
+    st = Stencil(min, ((-2, -1), (-2, 0), (-2, -3)))
+    print("Before running:")
+    m.dump()
+
+    st.seq_apply(m)
+    print("After running:")
+    m.dump()
+
+    print("Applying in parallel:")
+    #st.apply(m)
 
 if __name__ == "__main__":
     main()

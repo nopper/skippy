@@ -1,7 +1,16 @@
 import multiprocessing
 from collections import namedtuple
 
-Connections = namedtuple('Connections', 'right left up down up_left down_right up_right down_light')
+RIGHT,      \
+LEFT,       \
+UP,         \
+DOWN,       \
+UP_LEFT,    \
+DOWN_RIGHT, \
+UP_RIGHT,   \
+DOWN_LEFT = range(8)
+
+Connections = namedtuple('Connections', 'right left up down up_left down_right up_right down_left')
 
 class Connections(object):
     def __init__(self, right, left, up, down):
@@ -20,6 +29,22 @@ class Connections(object):
             (self.right, self.left, self.up, self.down,
              self.up_left, self.up_right, self.down_left, self.down_right)
 
+class Communicator(object):
+    def __init__(self, parent):
+        self.parent = parent
+        self.mapper = \
+          'right left up down up_left down_right up_right down_left'.split(' ')
+
+    def send(self, remote, direction):
+        print(str(self.parent.wid) + \
+              " --> send to  : %s (direction %s)" % (str(remote),
+                  self.mapper[direction]))
+
+    def receive(self, remote, direction):
+        print(str(self.parent.wid) + \
+              " <-- recv from: %s (direction %s)" % (str(remote),
+                  self.mapper[direction]))
+
 class Skeleton(object):
     """
     This is the base class for skeleton templates
@@ -29,9 +54,10 @@ class Skeleton(object):
 class StencilWorker(object):
     _id = 0
 
-    def __init__(self, function, partition, pwidth, pheight):
+    def __init__(self, function, offsets, partition, pwidth, pheight):
         self.wid = StencilWorker._id
         self.function = function
+        self.offsets = offsets
         self.partition = partition
 
         self.col, self.row = 0, 0
@@ -39,6 +65,7 @@ class StencilWorker(object):
         self.pwidth, self.pheight = pwidth, pheight
 
         self.connections = None
+        self.comm = Communicator(self)
 
 
         print("Worker %d has %s" % (StencilWorker._id, self.partition))
@@ -79,26 +106,41 @@ class StencilWorker(object):
         pr = lambda x: print(str(self.wid) + str(x))
 
         if self.col + self.width == self.pwidth:
-            pr("invio destra a " + str(self.connections.right))
+            self.comm.send(self.connections.right, RIGHT)
 
         if self.row + self.height == self.pheight:
-            pr("invio giu a " + str(self.connections.down))
+            self.comm.send(self.connections.down_right, DOWN_RIGHT)
+            self.comm.send(self.connections.down,       DOWN)
+            self.comm.send(self.connections.down_left,  DOWN_LEFT)
 
         if self.col > 0:
-            pr("invio sinistra a " + str(self.connections.left))
             if self.row > 0:
-                pr("invio sopra a " + str(self.connections.up))
+                self.comm.send(self.connections.up_left, UP_LEFT)
+                self.comm.send(self.connections.up,      UP)
 
-        pr("ricevo sinistra da " + str(self.connections.left))
-        pr("ricevo sopra da " + str(self.connections.up))
-        pr("ricevo destra da " + str(self.connections.right))
-        pr("ricevo giu da " + str(self.connections.down))
+            self.comm.send(self.connections.left, LEFT)
+
+        if self.row > 0:
+            self.comm.send(self.connections.up_right, UP_RIGHT)
+
+        self.comm.receive(self.connections.left,       LEFT)
+        self.comm.receive(self.connections.up_left,    UP_LEFT)
+        self.comm.receive(self.connections.up,         UP)
+        self.comm.receive(self.connections.up_right,   UP_RIGHT)
+        self.comm.receive(self.connections.right,      RIGHT)
+        self.comm.receive(self.connections.down_right, DOWN_RIGHT)
+        self.comm.receive(self.connections.down,       DOWN)
+        self.comm.receive(self.connections.down_left,  DOWN_LEFT)
 
         if self.col + self.width < self.pwidth:
-            pr("invia destra a " + str(self.connections.right))
+            self.comm.send(self.connections.right, RIGHT)
 
         if self.row + self.height < self.pheight:
-            pr("invia giu a " + str(self.connections.down))
+            # Riordinate giusto per performance
+            self.comm.send(self.connections.down_left,  DOWN_LEFT)
+            self.comm.send(self.connections.down,       DOWN)
+            self.comm.send(self.connections.down_right, DOWN_RIGHT)
+
 
 #        for i in range(self.partition.rows):
 #            for j in range(self.partition.cols):
@@ -115,6 +157,71 @@ class Stencil(object):
     def __init__(self, function, offsets):
         self.function = function
         self.offsets = offsets
+        self.analyze_offsets()
+
+    def analyze_offsets(self):
+        """
+        This function is in charge of extracting the proper sub-partitions that
+        must be transmitted to the other workers in a stencil fashion
+        """
+        extract = lambda l, rev: sorted(filter(l, self.offsets), reverse=rev)
+
+        right = extract(lambda x: x[0] == 0 and x[1] > 0, True)
+        left  = extract(lambda x: x[0] == 0 and x[1] < 0, False)
+        up    = extract(lambda x: x[0] < 0 and x[1] == 0, False)
+        down  = extract(lambda x: x[0] > 0 and x[1] == 0, True)
+
+        # Sort the first key which is the row so order is False since we are
+        # interested in far jumps which are < 0
+        up_left  = extract(lambda x: x[0] < 0 and x[1] < 0, False)
+
+        if up_left:
+            max_row = up_left[0][0]
+            max_col = sorted(up_left, key=lambda x: x[1], reverse=False)[0][1]
+            target_up_left = (max_row, max_col)
+        else:
+            target_up_left = None
+
+        up_right = extract(lambda x: x[0] < 0 and x[1] > 0, False)
+
+        if up_right:
+            max_row = up_right[0][0]
+            max_col = sorted(up_right, key=lambda x: x[1], reverse=True)[0][1]
+            target_up_right = (max_row, max_col)
+        else:
+            target_up_right = None
+
+        # Sort the first key which is the row so order is True since we are
+        # interested in far jumps which are > 0
+        down_left = extract(lambda x: x[0] > 0 and x[1] < 0, True)
+
+        if down_left:
+            max_row = down_left[0][0]
+            max_col = sorted(down_left, key=lambda x: x[1], reverse=False)[0][1]
+            target_down_left = (max_row, max_col)
+        else:
+            target_down_left = None
+
+        down_right = extract(lambda x: x[0] > 0 and x[1] > 0, True)
+
+        if down_right:
+            max_row = down_left[0][0]
+            max_col = sorted(down_left, key=lambda x: x[1], reverse=True)[0][1]
+            target_down_right = (max_row, max_col)
+        else:
+            target_down_right = None
+
+        target_right = right and right[0] or None
+        target_left  = left and left[0] or None
+        target_up    = up and up[0] or None
+        target_down  = down and down[0] or None
+
+        print("List of possible targets:")
+        print("Left: %s Right: %s" % (target_left, target_right))
+        print("Up  : %s Down : %s" % (target_up, target_down))
+
+        print("Up-left  : %s Up-right : %s" % (target_up_left, target_up_right))
+        print("Down-left  : %s Down-right : %s" % (target_down_left, target_down_right))
 
     def apply(self, matrix):
         nw = multiprocessing.cpu_count() * 2
@@ -124,7 +231,7 @@ class Stencil(object):
         workers = []
 
         for i in range(rw):
-            worker = StencilWorker(self.function,
+            worker = StencilWorker(self.function, self.offsets,
                                    matrix.partition(rows, cols, i),
                                    matrix.cols, matrix.rows)
             wdict[worker.wid] = worker
@@ -144,13 +251,15 @@ class Stencil(object):
 
 
     def seq_apply(self, matrix):
+        old = matrix.clone()
+
         for i in range(matrix.rows):
             for j in range(matrix.cols):
                 val = matrix.get(i, j)
 
                 for (x, y) in self.offsets:
                     val = self.function(val,
-                                        matrix.get((i + x) % matrix.rows,
-                                                   (j + y) % matrix.cols))
+                                        old.get((i + x) % matrix.rows,
+                                                (j + y) % matrix.cols))
 
                 matrix.set(i, j, val)
