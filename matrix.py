@@ -153,22 +153,44 @@ class Matrix(object):
         elif not col_dependent:
             return trivial_sol(row_dependent, 0)
 
+        print("Non-trivial case evaluation triggered")
+
         # Now for non-trivial partition we derive the biggest square
         # that our offsets can derive.
 
-        targets = sorted(offsets, key=lambda x: x[0])
+        extract = lambda l, k, rev: sorted(filter(l, offsets), reverse=rev)
 
-        height = abs(targets[0][0]) + 1
+        # Sort row descending
+        targets = extract(lambda x: x[0] > 0,
+                          lambda x: x[0], True)
 
-        if len(targets) > 1:
-            height += targets[-1][0]
+        height = targets and targets[0][0] or 0
 
-        targets = sorted(offsets, key=lambda x: x[1])
+        targets = extract(lambda x: x[0] < 0,
+                          lambda x: x[0], False)
 
-        width = abs(targets[0][1]) + 1
+        height += targets and abs(targets[0][0]) or 0
 
-        if len(targets) > 1:
-            width += targets[-1][1]
+        if height > 0:
+            height += 1
+
+        print ("Height is " + str(height))
+
+        # Sort row descending
+        targets = extract(lambda x: x[1] > 0,
+                          lambda x: x[1], True)
+
+        width = targets and targets[0][1] or 0
+
+        targets = extract(lambda x: x[1] < 0,
+                          lambda x: x[1], False)
+
+        width += targets and abs(targets[0][1]) or 0
+
+        if width > 0:
+            width += 1
+
+        print ("Width is " + str(width))
 
         print("Possible partition individuated %dx%d" % (height, width))
 

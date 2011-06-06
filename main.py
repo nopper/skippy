@@ -17,16 +17,16 @@ def main():
 
     #st = Stencil(min, ((-1,0), (0,-1), (0,1), (1,0)))
 
-    st = Stencil(min, ((-2, -1), (-2, 0), (-2, -3)))
+    st = Stencil(min, ((-2, -1), (-2, 0), (-2, -2)))
     print("Before running:")
     m.dump()
 
-    st.seq_apply(m)
+    #st.seq_apply(m)
     print("After running:")
     m.dump()
 
     print("Applying in parallel:")
-    #st.apply(m)
+    st.apply(m)
 
 if __name__ == "__main__":
     main()

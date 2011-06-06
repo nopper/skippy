@@ -1,4 +1,5 @@
 import multiprocessing
+from matrix import Matrix
 from collections import namedtuple
 
 RIGHT,      \
@@ -36,9 +37,47 @@ class Communicator(object):
           'right left up down up_left down_right up_right down_left'.split(' ')
 
     def send(self, remote, direction):
+        rect = self.parent.data_segments[direction]
+
+        if not rect:
+            return
+
         print(str(self.parent.wid) + \
               " --> send to  : %s (direction %s)" % (str(remote),
                   self.mapper[direction]))
+
+        print("I have to send " + str(self.parent.data_segments[direction]))
+
+        if rect[0] > 0:
+            row_stop = self.parent.height
+            row_start = self.parent.height - rect[0]
+        elif rect[0] < 0:
+            row_stop = abs(rect[0])
+            row_start = 0
+        else:
+            row_stop = self.parent.height
+            row_start = 0
+
+        if rect[1] > 0:
+            col_stop = self.parent.width
+            col_start = self.parent.width - rect[1]
+        elif rect[1] < 0:
+            col_stop = abs(rect[1])
+            col_start = 0
+        else:
+            col_stop = self.parent.width
+            col_start = 0
+
+        out = []
+
+        for i in range(row_start, row_stop, 1):
+            col = []
+            for j in range(col_start, col_stop, 1):
+                col.append(self.parent.partition.get(i, j))
+            out.append(col)
+
+        m = Matrix.from_list(row_stop - row_start, col_stop - col_start, out)
+        m.dump()
 
     def receive(self, remote, direction):
         print(str(self.parent.wid) + \
@@ -54,10 +93,11 @@ class Skeleton(object):
 class StencilWorker(object):
     _id = 0
 
-    def __init__(self, function, offsets, partition, pwidth, pheight):
+    def __init__(self, function, offsets, data_segments, partition, pwidth, pheight):
         self.wid = StencilWorker._id
         self.function = function
         self.offsets = offsets
+        self.data_segments = data_segments
         self.partition = partition
 
         self.col, self.row = 0, 0
@@ -223,6 +263,20 @@ class Stencil(object):
         print("Up-left  : %s Up-right : %s" % (target_up_left, target_up_right))
         print("Down-left  : %s Down-right : %s" % (target_down_left, target_down_right))
 
+        # Now we try to assign correct mapping. Please beware that if you
+        # change the enumeration order you also need to change the order of
+        # this assignment.
+        self.data_segments = [
+            target_right,
+            target_left,
+            target_up,
+            target_down,
+            target_up_left,
+            target_down_right,
+            target_up_right,
+            target_down_left
+        ]
+
     def apply(self, matrix):
         nw = multiprocessing.cpu_count() * 2
         rows, cols, rw = matrix.derive_partition(self.offsets, nw)
@@ -232,6 +286,7 @@ class Stencil(object):
 
         for i in range(rw):
             worker = StencilWorker(self.function, self.offsets,
+                                   self.data_segments,
                                    matrix.partition(rows, cols, i),
                                    matrix.cols, matrix.rows)
             wdict[worker.wid] = worker
