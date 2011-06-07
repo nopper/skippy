@@ -11,36 +11,17 @@ log = logging.getLogger("comm-mpi")
 log.setLevel(logging.DEBUG)
 
 comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
 
 class Communicator(object):
     def __init__(self, parent):
         self.parent = parent
-        self.mapper = \
-          'right left up down up_left down_right up_right down_left'.split(' ')
-
-        self.create_sockets()
-
-    def create_sockets(self):
-        self.reverse_map = [
-            LEFT, RIGHT, DOWN, UP, DOWN_RIGHT, UP_LEFT, DOWN_LEFT, UP_RIGHT
-        ]
-
-        self.sockets = [None,] * 8
-
-        for dir, port in zip(self.parent.data_segments, range(8)):
-            if not dir: continue
 
     def send(self, remote, direction):
         rect = self.parent.data_segments[direction]
 
-        if not rect:
+        if rect is None or remote == None or remote == rank - 1:
             return
-
-        log.debug(str(self.parent.wid) + \
-              " --> send to  : %s (direction %s)" % (str(remote),
-                  self.mapper[direction]))
-
-        log.debug("I have to send " + str(self.parent.data_segments[direction]))
 
         if rect[0] > 0:
             row_stop = self.parent.height
@@ -71,14 +52,20 @@ class Communicator(object):
             out.append(col)
 
         m = Matrix.from_list(row_stop - row_start, col_stop - col_start, out)
-        comm.send(m, dest=remote + 1)
+
+        log.debug("%d --> send to  : %s (direction %s)" % (rank - 1, str(remote),
+                  LABELS[direction]))
+
+        comm.send(m, dest=remote + 1, tag=direction)
+        log.debug("%d --> send to  : %s DONE" % (rank - 1, str(remote)))
 
     def receive(self, remote, direction):
-        if remote is None:
+        rect = self.parent.data_segments[direction]
+
+        if rect is None or remote is None or remote == rank - 1:
             return
 
-        log.debug(str(self.parent.wid) + \
-              " <-- recv from: %s (direction %s)" % (str(remote),
-                  self.mapper[direction]))
+        log.debug("%d <-- recv from: %s (direction %s)" % (rank - 1, str(remote),
+                  LABELS[REVERSED[direction]]))
 
-        return comm.recv(source=remote + 1)
+        return comm.recv(source=remote + 1, tag=direction)
