@@ -5,7 +5,7 @@ import logging
 logging.basicConfig()
 
 log = logging.getLogger("matrix")
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
 class Matrix(object):
     """
@@ -75,10 +75,12 @@ class Matrix(object):
         return copy.deepcopy(self)
 
     def dump(self):
+        str = ""
         for i in range(self.rows):
             for j in range(self.cols):
-                sys.stdout.write("%s " % self.matrix[i][j])
-            sys.stdout.write('\n')
+                str += "%s " % self.matrix[i][j]
+            str += '\n'
+        #log.info(str)
 
     @staticmethod
     def from_string(rows, cols, contents):
