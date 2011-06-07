@@ -1,18 +1,25 @@
 import sys
+import itertools
+import logging
+
+logging.basicConfig()
+
+log = logging.getLogger("matrix")
+log.setLevel(logging.INFO)
 
 class Matrix(object):
     """
     The text above is considered a test case.
 
     >>> m = Matrix.from_string(6, 5, "2 3 4 5 6 5 6 8 9 1 4 4 6 7 3 6 6 3 2 3 0 4 6 3 0 3 5 1 6 99")
-    >>> for i in range(6): print(m.partition(1, 5, i))
+    >>> for i in range(6): log.debug(m.partition(1, 5, i))
     [[2, 3, 4, 5, 6]]
     [[5, 6, 8, 9, 1]]
     [[4, 4, 6, 7, 3]]
     [[6, 6, 3, 2, 3]]
     [[0, 4, 6, 3, 0]]
     [[3, 5, 1, 6, 99]]
-    >>> for i in range(15): print(m.partition(2, 1, i))
+    >>> for i in range(15): log.debug(m.partition(2, 1, i))
     [[2], [5]]
     [[3], [6]]
     [[4], [8]]
@@ -76,8 +83,8 @@ class Matrix(object):
     @staticmethod
     def from_string(rows, cols, contents):
         m = Matrix(rows, cols)
-        elems = map(lambda x: int(x),
-                    contents.replace("\n", " ").strip().split(" "))
+        elems = itertools.imap(lambda x: int(x),
+                               contents.replace("\n", " ").strip().split(" "))
 
         for i in range(rows):
             for j in range(cols):
@@ -114,8 +121,8 @@ class Matrix(object):
         # Now we need to get the maximum displacement element, so we
         # sort by using abs()
 
-        #print("Offsets dependendent on rows: %s" % str(row_dependent))
-        #print("Offsets dependendent on cols: %s" % str(col_dependent))
+        #log.debug("Offsets dependendent on rows: %s" % str(row_dependent))
+        #log.debug("Offsets dependendent on cols: %s" % str(col_dependent))
 
         def trivial_sol(depends, is_col=0):
             aref, bref = self.cols, self.rows
@@ -153,7 +160,7 @@ class Matrix(object):
         elif not col_dependent:
             return trivial_sol(row_dependent, 0)
 
-        print("Non-trivial case evaluation triggered")
+        log.debug("Non-trivial case evaluation triggered")
 
         # Now for non-trivial partition we derive the biggest square
         # that our offsets can derive.
@@ -174,7 +181,7 @@ class Matrix(object):
         if height > 0:
             height += 1
 
-        print ("Height is " + str(height))
+        log.debug ("Height is " + str(height))
 
         # Sort row descending
         targets = extract(lambda x: x[1] > 0,
@@ -190,21 +197,21 @@ class Matrix(object):
         if width > 0:
             width += 1
 
-        print ("Width is " + str(width))
+        log.debug ("Width is " + str(width))
 
-        print("Possible partition individuated %dx%d" % (height, width))
+        log.debug("Possible partition individuated %dx%d" % (height, width))
 
         # Now we try to figure out how many workers we can spawn
 
         if self.cols % width != 0:
             self.cols += width - (self.cols % width)
-            print("Column padding required")
+            log.debug("Column padding required")
 
         if self.rows % height != 0:
             self.rows += height - (self.rows % height)
-            print("Row padding required")
+            log.debug("Row padding required")
 
-        print("Using a padded matrix %dx%d" % (self.rows, self.cols))
+        log.debug("Using a padded matrix %dx%d" % (self.rows, self.cols))
 
         def throttle(is_width):
             aparam, bparam = width, height
@@ -222,7 +229,7 @@ class Matrix(object):
 
             return aparam
 
-        print("Trying to fit %d processors" % nproc)
+        log.debug("Trying to fit %d processors" % nproc)
 
         if width <= height:
             width = throttle(True)
@@ -231,7 +238,7 @@ class Matrix(object):
             height = throttle(False)
             width = throttle(True)
 
-        print("Possible partition individuated %dx%d" % (height, width))
+        log.debug("Possible partition individuated %dx%d" % (height, width))
 
         eproc = int((self.cols * self.rows) / (height * width))
 

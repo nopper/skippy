@@ -1,88 +1,21 @@
+import sys
+import logging
 import multiprocessing
+
+from mpi4py import MPI
+
 from matrix import Matrix
-from collections import namedtuple
+from communicator.enum import *
+from communicator.mpi import Communicator
 
-RIGHT,      \
-LEFT,       \
-UP,         \
-DOWN,       \
-UP_LEFT,    \
-DOWN_RIGHT, \
-UP_RIGHT,   \
-DOWN_LEFT = range(8)
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+name = MPI.Get_processor_name()
 
-Connections = namedtuple('Connections', 'right left up down up_left down_right up_right down_left')
+logging.basicConfig()
 
-class Connections(object):
-    def __init__(self, right, left, up, down):
-        self.right = right
-        self.left = left
-        self.up = up
-        self.down = down
-
-        self.up_left = None
-        self.up_right = None
-        self.down_left = None
-        self.down_right = None
-
-    def __repr__(self):
-        return "right=%s, left=%s, up=%s, down=%s, ul=%s, ur=%s, dl=%s, dr=%s" % \
-            (self.right, self.left, self.up, self.down,
-             self.up_left, self.up_right, self.down_left, self.down_right)
-
-class Communicator(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.mapper = \
-          'right left up down up_left down_right up_right down_left'.split(' ')
-
-    def send(self, remote, direction):
-        rect = self.parent.data_segments[direction]
-
-        if not rect:
-            return
-
-        print(str(self.parent.wid) + \
-              " --> send to  : %s (direction %s)" % (str(remote),
-                  self.mapper[direction]))
-
-        print("I have to send " + str(self.parent.data_segments[direction]))
-
-        if rect[0] > 0:
-            row_stop = self.parent.height
-            row_start = self.parent.height - rect[0]
-        elif rect[0] < 0:
-            row_stop = abs(rect[0])
-            row_start = 0
-        else:
-            row_stop = self.parent.height
-            row_start = 0
-
-        if rect[1] > 0:
-            col_stop = self.parent.width
-            col_start = self.parent.width - rect[1]
-        elif rect[1] < 0:
-            col_stop = abs(rect[1])
-            col_start = 0
-        else:
-            col_stop = self.parent.width
-            col_start = 0
-
-        out = []
-
-        for i in range(row_start, row_stop, 1):
-            col = []
-            for j in range(col_start, col_stop, 1):
-                col.append(self.parent.partition.get(i, j))
-            out.append(col)
-
-        m = Matrix.from_list(row_stop - row_start, col_stop - col_start, out)
-        m.dump()
-
-    def receive(self, remote, direction):
-        print(str(self.parent.wid) + \
-              " <-- recv from: %s (direction %s)" % (str(remote),
-                  self.mapper[direction]))
+log = logging.getLogger("stencil")
+log.setLevel(logging.INFO)
 
 class Skeleton(object):
     """
@@ -93,9 +26,9 @@ class Skeleton(object):
 class StencilWorker(object):
     _id = 0
 
-    def __init__(self, function, offsets, data_segments, partition, pwidth, pheight):
+    def __init__(self, offsets, data_segments, partition, pwidth, pheight, \
+                 connections=None):
         self.wid = StencilWorker._id
-        self.function = function
         self.offsets = offsets
         self.data_segments = data_segments
         self.partition = partition
@@ -104,12 +37,13 @@ class StencilWorker(object):
         self.width, self.height = self.partition.cols, self.partition.rows
         self.pwidth, self.pheight = pwidth, pheight
 
-        self.connections = None
-        self.comm = Communicator(self)
+        self.connections = connections
 
-
-        print("Worker %d has %s" % (StencilWorker._id, self.partition))
-        StencilWorker._id += 1
+        if rank == 0:
+            log.debug("Worker %d has %s" % (StencilWorker._id, self.partition))
+            StencilWorker._id += 1
+        else:
+            self.comm = Communicator(self)
 
     def autoconnect(self, wdict, rows=None, cols=None):
         if self.connections:
@@ -118,7 +52,15 @@ class StencilWorker(object):
             self.connections.down_left = self.connections.down.connections.left
             self.connections.down_right = self.connections.down.connections.right
 
-            print(str(self) + " " + str(self.connections))
+            log.debug(str(self) + " " + str(self.connections))
+            log.debug("Converting connection to id pairs for %d" % self.wid)
+
+            # Now let's convert it back to id pairs
+            for lbl in 'right left up down up_left down_right up_right down_left'.split(' '):
+                obj = getattr(self.connections, lbl)
+                if not isinstance(obj, int):
+                    setattr(self.connections, lbl,  obj.wid)
+
             return
 
         tot = int(rows * cols)
@@ -142,8 +84,16 @@ class StencilWorker(object):
         return 'Worker(%d [%d %d %d %d])' % (self.wid, self.row, self.col,
                 self.width, self.height)
 
+    def bootstrap(self):
+        log.info("Sending partition to worker %d" % self.wid)
+
+        data = (self.offsets, self.data_segments, self.partition, \
+                self.pwidth, self.pheight, self.connections)
+
+        comm.send(data, dest=self.wid + 1, tag=0)
+
     def start(self):
-        pr = lambda x: print(str(self.wid) + str(x))
+        log.info("Worker started on processor %d %s" % (rank, name))
 
         if self.col + self.width == self.pwidth:
             self.comm.send(self.connections.right, RIGHT)
@@ -256,12 +206,12 @@ class Stencil(object):
         target_up    = up and up[0] or None
         target_down  = down and down[0] or None
 
-        print("List of possible targets:")
-        print("Left: %s Right: %s" % (target_left, target_right))
-        print("Up  : %s Down : %s" % (target_up, target_down))
+        log.debug("List of possible targets:")
+        log.debug("Left: %s Right: %s" % (target_left, target_right))
+        log.debug("Up  : %s Down : %s" % (target_up, target_down))
 
-        print("Up-left  : %s Up-right : %s" % (target_up_left, target_up_right))
-        print("Down-left  : %s Down-right : %s" % (target_down_left, target_down_right))
+        log.debug("Up-left  : %s Up-right : %s" % (target_up_left, target_up_right))
+        log.debug("Down-left  : %s Down-right : %s" % (target_down_left, target_down_right))
 
         # Now we try to assign correct mapping. Please beware that if you
         # change the enumeration order you also need to change the order of
@@ -278,22 +228,22 @@ class Stencil(object):
         ]
 
     def apply(self, matrix):
-        nw = multiprocessing.cpu_count() * 2
+        nw = comm.Get_size()
         rows, cols, rw = matrix.derive_partition(self.offsets, nw)
 
         wdict = {}
         workers = []
 
         for i in range(rw):
-            worker = StencilWorker(self.function, self.offsets,
+            worker = StencilWorker(self.offsets,
                                    self.data_segments,
                                    matrix.partition(rows, cols, i),
                                    matrix.cols, matrix.rows)
             wdict[worker.wid] = worker
             workers.append(worker)
 
-        print(matrix.rows/rows)
-        print(matrix.cols/cols)
+        log.debug(matrix.rows/rows)
+        log.debug(matrix.cols/cols)
 
         for worker in workers:
             worker.autoconnect(wdict, matrix.rows / rows, matrix.cols / cols)
@@ -302,7 +252,8 @@ class Stencil(object):
             worker.autoconnect(wdict)
 
         for worker in workers:
-            worker.start()
+            worker.bootstrap()
+            #worker.start()
 
 
     def seq_apply(self, matrix):

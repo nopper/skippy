@@ -5,6 +5,7 @@ and then we apply the minimum over the all structure.
 
 from matrix import Matrix
 from stencil import Stencil
+from functional import function
 
 def main():
     m = Matrix.from_string(6, 6, """
@@ -17,15 +18,15 @@ def main():
 
     #st = Stencil(min, ((-1,0), (0,-1), (0,1), (1,0)))
 
-    st = Stencil(min, ((-2, -1), (-2, 0), (-2, -2)))
-    print("Before running:")
-    m.dump()
+    st = Stencil(function, ((-2, -1), (-2, 0), (-2, -2)))
+    #print("Before running:")
+    #m.dump()
 
     #st.seq_apply(m)
-    print("After running:")
-    m.dump()
+    #print("After running:")
+    #m.dump()
 
-    print("Applying in parallel:")
+    #print("Applying in parallel:")
     st.apply(m)
 
 if __name__ == "__main__":
