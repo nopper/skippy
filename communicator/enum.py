@@ -9,7 +9,11 @@ DOWN_RIGHT, \
 UP_RIGHT,   \
 DOWN_LEFT = range(8)
 
-Connections = namedtuple('Connections', 'right left up down up_left down_right up_right down_left')
+LABELS = 'right left up down up_left down_right up_right down_left'
+
+LABELS = LABELS.split(' ')
+ORDERED = range(8)
+REVERSED = [LEFT, RIGHT, DOWN, UP, DOWN_RIGHT, UP_LEFT, DOWN_LEFT, UP_RIGHT]
 
 class Connections(object):
     def __init__(self, right, left, up, down):
@@ -27,3 +31,15 @@ class Connections(object):
         return "right=%s, left=%s, up=%s, down=%s, ul=%s, ur=%s, dl=%s, dr=%s" % \
             (self.right, self.left, self.up, self.down,
              self.up_left, self.up_right, self.down_left, self.down_right)
+
+    def convert_to_id(self):
+        for lbl in LABELS:
+            obj = getattr(self, lbl)
+
+            if obj is None:
+                setattr(self, lbl, None)
+                continue
+
+            wid = obj.wid
+
+            setattr(self, lbl, wid)
