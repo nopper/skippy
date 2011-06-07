@@ -52,33 +52,31 @@ class StencilWorker(object):
             self.connections.down_left = self.connections.down.connections.left
             self.connections.down_right = self.connections.down.connections.right
 
-            log.debug(str(self) + " " + str(self.connections))
-            log.debug("Converting connection to id pairs for %d" % self.wid)
-
-            # Now let's convert it back to id pairs
-            for lbl in 'right left up down up_left down_right up_right down_left'.split(' '):
-                obj = getattr(self.connections, lbl)
-                if not isinstance(obj, int):
-                    setattr(self.connections, lbl,  obj.wid)
-
             return
 
         tot = int(rows * cols)
 
         i_col = self.wid % cols
-        i_row = int(self.wid / rows)
+        i_row = int(self.wid / cols)
 
         start = cols * i_row
 
         # Here we calculate our position in the general matrix
         self.col, self.row = i_col * self.height, i_row * self.width
 
-        self.connections = Connections(
-            wdict[(self.wid + 1) % cols + start],
-            wdict[(self.wid - 1) % cols + start],
-            wdict[(self.wid - rows) % tot],
-            wdict[(self.wid + rows) % tot],
-        )
+        links = []
+
+        for id in ((self.wid + 1) % cols + start,
+                   (self.wid - 1) % cols + start,
+                   (self.wid - cols) % tot,
+                   (self.wid + cols) % tot):
+
+            if id == self.wid:
+                links.append(None)
+            else:
+                links.append(wdict[id])
+
+        self.connections = Connections(*links)
 
     def __repr__(self):
         return 'Worker(%d [%d %d %d %d])' % (self.wid, self.row, self.col,
@@ -95,41 +93,18 @@ class StencilWorker(object):
     def start(self):
         log.info("Worker started on processor %d %s" % (rank, name))
 
-        if self.col + self.width == self.pwidth:
-            self.comm.send(self.connections.right, RIGHT)
+        # First we send all the required partitions to the neighbors and then
+        # receive all the segments and reconstruct a local matrix where the
+        # function will be evaluated.
 
-        if self.row + self.height == self.pheight:
-            self.comm.send(self.connections.down_right, DOWN_RIGHT)
-            self.comm.send(self.connections.down,       DOWN)
-            self.comm.send(self.connections.down_left,  DOWN_LEFT)
+        for lbl, enum in zip(LABELS, range(8)):
+            self.comm.send(getattr(self.connections, lbl), enum)
 
-        if self.col > 0:
-            if self.row > 0:
-                self.comm.send(self.connections.up_left, UP_LEFT)
-                self.comm.send(self.connections.up,      UP)
+        for lbl, enum in zip(LABELS, range(8)):
+            self.comm.receive(getattr(self.connections, lbl),
+                    enum)
 
-            self.comm.send(self.connections.left, LEFT)
-
-        if self.row > 0:
-            self.comm.send(self.connections.up_right, UP_RIGHT)
-
-        self.comm.receive(self.connections.left,       LEFT)
-        self.comm.receive(self.connections.up_left,    UP_LEFT)
-        self.comm.receive(self.connections.up,         UP)
-        self.comm.receive(self.connections.up_right,   UP_RIGHT)
-        self.comm.receive(self.connections.right,      RIGHT)
-        self.comm.receive(self.connections.down_right, DOWN_RIGHT)
-        self.comm.receive(self.connections.down,       DOWN)
-        self.comm.receive(self.connections.down_left,  DOWN_LEFT)
-
-        if self.col + self.width < self.pwidth:
-            self.comm.send(self.connections.right, RIGHT)
-
-        if self.row + self.height < self.pheight:
-            # Riordinate giusto per performance
-            self.comm.send(self.connections.down_left,  DOWN_LEFT)
-            self.comm.send(self.connections.down,       DOWN)
-            self.comm.send(self.connections.down_right, DOWN_RIGHT)
+        log.info("Computing...")
 
 
 #        for i in range(self.partition.rows):
@@ -228,7 +203,7 @@ class Stencil(object):
         ]
 
     def apply(self, matrix):
-        nw = comm.Get_size()
+        nw = comm.Get_size() - 1
         rows, cols, rw = matrix.derive_partition(self.offsets, nw)
 
         wdict = {}
@@ -242,14 +217,16 @@ class Stencil(object):
             wdict[worker.wid] = worker
             workers.append(worker)
 
-        log.debug(matrix.rows/rows)
-        log.debug(matrix.cols/cols)
+        log.info("After auto partition => Rows: %d Cols: %d" % (matrix.rows/rows, matrix.cols/cols))
 
         for worker in workers:
             worker.autoconnect(wdict, matrix.rows / rows, matrix.cols / cols)
 
         for worker in workers:
             worker.autoconnect(wdict)
+
+        for worker in workers:
+            worker.connections.convert_to_id()
 
         for worker in workers:
             worker.bootstrap()
