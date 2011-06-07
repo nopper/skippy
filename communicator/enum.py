@@ -10,8 +10,10 @@ UP_RIGHT,   \
 DOWN_LEFT = range(8)
 
 LABELS = 'right left up down up_left down_right up_right down_left'
+RLABELS = 'left right down up down_right up_left down_left up_right'
 
 LABELS = LABELS.split(' ')
+RLABELS = RLABELS.split(' ')
 ORDERED = range(8)
 REVERSED = [LEFT, RIGHT, DOWN, UP, DOWN_RIGHT, UP_LEFT, DOWN_LEFT, UP_RIGHT]
 

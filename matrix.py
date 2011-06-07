@@ -80,7 +80,7 @@ class Matrix(object):
             for j in range(self.cols):
                 str += "%s " % self.matrix[i][j]
             str += '\n'
-        #log.info(str)
+        print str
 
     @staticmethod
     def from_string(rows, cols, contents):

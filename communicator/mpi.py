@@ -24,21 +24,21 @@ class Communicator(object):
             return
 
         if rect[0] > 0:
-            row_stop = self.parent.height
-            row_start = self.parent.height - rect[0]
-        elif rect[0] < 0:
-            row_stop = abs(rect[0])
+            row_stop = rect[0]
             row_start = 0
+        elif rect[0] < 0:
+            row_stop = self.parent.height
+            row_start = self.parent.height - abs(rect[0])
         else:
             row_stop = self.parent.height
             row_start = 0
 
         if rect[1] > 0:
-            col_stop = self.parent.width
-            col_start = self.parent.width - rect[1]
-        elif rect[1] < 0:
-            col_stop = abs(rect[1])
+            col_stop = rect[1]
             col_start = 0
+        elif rect[1] < 0:
+            col_stop = self.parent.width
+            col_start = self.parent.width - abs(rect[1])
         else:
             col_stop = self.parent.width
             col_start = 0
@@ -55,17 +55,22 @@ class Communicator(object):
 
         log.debug("%d --> send to  : %s (direction %s)" % (rank - 1, str(remote),
                   LABELS[direction]))
+        m.dump()
 
         comm.send(m, dest=remote + 1, tag=direction)
         log.debug("%d --> send to  : %s DONE" % (rank - 1, str(remote)))
 
     def receive(self, remote, direction):
-        rect = self.parent.data_segments[direction]
+        rect = self.parent.data_segments[REVERSED[direction]]
 
         if rect is None or remote is None or remote == rank - 1:
             return
 
         log.debug("%d <-- recv from: %s (direction %s)" % (rank - 1, str(remote),
-                  LABELS[REVERSED[direction]]))
+                  LABELS[direction]))
 
-        return comm.recv(source=remote + 1, tag=direction)
+        data = comm.recv(source=remote + 1, tag=REVERSED[direction])
+
+        log.debug("%d <-- recv from: %s (direction %s) DONE" % (rank - 1, str(remote),
+                  LABELS[direction]))
+        return data

@@ -5,6 +5,9 @@ import multiprocessing
 from mpi4py import MPI
 
 from matrix import Matrix
+from puzzle import Puzzle
+from functional import function
+
 from communicator.enum import *
 from communicator.mpi import Communicator
 
@@ -97,14 +100,34 @@ class StencilWorker(object):
         # receive all the segments and reconstruct a local matrix where the
         # function will be evaluated.
 
-        for lbl, enum in zip(LABELS, range(8)):
+        puzzle = Puzzle(self.partition)
+
+        for lbl, enum in zip(LABELS, ORDERED):
             self.comm.send(getattr(self.connections, lbl), enum)
 
-        for lbl, enum in zip(LABELS, range(8)):
-            self.comm.receive(getattr(self.connections, lbl),
-                    enum)
+        for lbl, enum in zip(RLABELS, REVERSED):
+            m = self.comm.receive(getattr(self.connections, lbl), enum)
+            if m: puzzle.add_piece(m, enum)
 
         log.info("Computing...")
+
+        matrix = puzzle.apply()
+        matrix.dump()
+        print ""
+
+        for i in range(puzzle.max_up, puzzle.max_up + self.partition.rows):
+            for j in range(puzzle.max_left, puzzle.max_left + self.partition.cols):
+                val = matrix.get(i, j)
+
+                for (x, y) in self.offsets:
+                    val = function(val, matrix.get(
+                        (i + x) % matrix.rows,
+                        (j + y) % matrix.cols
+                    ))
+
+                self.partition.set(i - puzzle.max_up, j - puzzle.max_left, val)
+
+        comm.send(self.partition, dest=0)
 
 
 #        for i in range(self.partition.rows):
@@ -191,15 +214,25 @@ class Stencil(object):
         # Now we try to assign correct mapping. Please beware that if you
         # change the enumeration order you also need to change the order of
         # this assignment.
+
+# This should be reversed actually
         self.data_segments = [
-            target_right,
             target_left,
-            target_up,
+            target_right,
             target_down,
-            target_up_left,
+            target_up,
             target_down_right,
+            target_up_left,
+            target_down_left,
             target_up_right,
-            target_down_left
+#            target_right,
+#            target_left,
+#            target_up,
+#            target_down,
+#            target_up_left,
+#            target_down_right,
+#            target_up_right,
+#            target_down_left
         ]
 
     def apply(self, matrix):
@@ -230,15 +263,35 @@ class Stencil(object):
 
         for worker in workers:
             worker.bootstrap()
-            #worker.start()
 
+        row, col = 0, 0
+
+        for idx in range(rw):
+            partition = comm.recv(source=idx + 1)
+
+            for i in range(rows):
+                for j in range(cols):
+                    row_start = row * partition.rows
+                    col_start = col * partition.cols
+
+                    matrix.set(row_start + i,
+                               col_start + j, partition.get(i, j))
+
+            col += 1
+
+            if col == matrix.cols/cols:
+                col = 0
+                row += 1
+
+        print "Result is"
+        matrix.dump()
 
     def seq_apply(self, matrix):
         old = matrix.clone()
 
         for i in range(matrix.rows):
             for j in range(matrix.cols):
-                val = matrix.get(i, j)
+                val = old.get(i, j)
 
                 for (x, y) in self.offsets:
                     val = self.function(val,

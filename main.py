@@ -16,7 +16,10 @@ def main():
 0 4 6 3 0 7
 3 5 1 6 99 1""")
 
-    #st = Stencil(min, ((-1,0), (0,-1), (0,1), (1,0)))
+    #st = Stencil(min, ((-1,0), (0,-1), (0,1), (1,0))) # List index error se
+    # lancio con 3 worker
+
+    # Controllare con piu worker se termina
 
     st = Stencil(function, ((-2, -1), (-2, 0), (-2, -2)))
     #print("Before running:")
