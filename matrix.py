@@ -1,4 +1,5 @@
 import sys
+import random
 import itertools
 import logging
 
@@ -100,6 +101,16 @@ class Matrix(object):
     def from_list(rows, cols, contents):
         m = Matrix(rows, cols)
         m.matrix = contents
+        return m
+
+    @staticmethod
+    def random(rows, cols):
+        m = Matrix(rows, cols)
+        m.matrix = []
+
+        for row in xrange(rows):
+            m.matrix.append([random.randint(0, 9) for i in xrange(cols)])
+
         return m
 
     def derive_partition(self, offsets, nproc):
