@@ -1,6 +1,5 @@
 import sys
 import logging
-import multiprocessing
 
 from mpi4py import MPI
 

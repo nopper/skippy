@@ -87,10 +87,13 @@ class Matrix(object):
         m = Matrix(rows, cols)
         elems = itertools.imap(lambda x: int(x),
                                contents.replace("\n", " ").strip().split(" "))
+        try:
+            for i in range(rows):
+                for j in range(cols):
+                    m.matrix[i][j] = elems.next()
+        except StopIteration:
+            pass
 
-        for i in range(rows):
-            for j in range(cols):
-                m.matrix[i][j] = next(elems)
         return m
 
     @staticmethod
