@@ -19,12 +19,6 @@ logging.basicConfig()
 log = logging.getLogger("stencil")
 log.setLevel(logging.INFO)
 
-class Skeleton(object):
-    """
-    This is the base class for skeleton templates
-    """
-    pass
-
 class StencilWorker(object):
     _id = 0
 
@@ -39,7 +33,7 @@ class StencilWorker(object):
         self.width, self.height = self.partition.cols, self.partition.rows
         self.pwidth, self.pheight = pwidth, pheight
 
-        self.connections = connections
+        self.conns = connections
 
         if rank == 0:
             log.debug("Worker %d has %s" % (StencilWorker._id, self.partition))
@@ -48,11 +42,13 @@ class StencilWorker(object):
             self.comm = Communicator(self)
 
     def autoconnect(self, wdict, rows=None, cols=None):
-        if self.connections:
-            self.connections.up_left = self.connections.up.connections.left
-            self.connections.up_right = self.connections.up.connections.right
-            self.connections.down_left = self.connections.down.connections.left
-            self.connections.down_right = self.connections.down.connections.right
+        if self.conns:
+            if self.conns.up:
+                self.conns.up_left = self.conns.up.conns.left
+                self.conns.up_right = self.conns.up.conns.right
+            if self.conns.down:
+                self.conns.down_left = self.conns.down.conns.left
+                self.conns.down_right = self.conns.down.conns.right
 
             return
 
@@ -78,7 +74,7 @@ class StencilWorker(object):
             else:
                 links.append(wdict[id])
 
-        self.connections = Connections(*links)
+        self.conns = Connections(*links)
 
     def __repr__(self):
         return 'Worker(%d [%d %d %d %d])' % (self.wid, self.row, self.col,
@@ -88,7 +84,7 @@ class StencilWorker(object):
         log.info("Sending partition to worker %d" % self.wid)
 
         data = (self.offsets, self.data_segments, self.partition, \
-                self.pwidth, self.pheight, self.connections)
+                self.pwidth, self.pheight, self.conns)
 
         comm.send(data, dest=self.wid + 1, tag=0)
 
@@ -102,17 +98,15 @@ class StencilWorker(object):
         puzzle = Puzzle(self.partition)
 
         for lbl, enum in zip(LABELS, ORDERED):
-            self.comm.send(getattr(self.connections, lbl), enum)
+            self.comm.send(getattr(self.conns, lbl), enum)
 
         for lbl, enum in zip(RLABELS, REVERSED):
-            m = self.comm.receive(getattr(self.connections, lbl), enum)
+            m = self.comm.receive(getattr(self.conns, lbl), enum)
             if m: puzzle.add_piece(m, enum)
 
         log.info("Computing...")
 
         matrix = puzzle.apply()
-        matrix.dump()
-        print ""
 
         for i in range(puzzle.max_up, puzzle.max_up + self.partition.rows):
             for j in range(puzzle.max_left, puzzle.max_left + self.partition.cols):
@@ -126,19 +120,9 @@ class StencilWorker(object):
 
                 self.partition.set(i - puzzle.max_up, j - puzzle.max_left, val)
 
-        comm.send(self.partition, dest=0)
-
-
-#        for i in range(self.partition.rows):
-#            for j in range(self.partition.cols):
-#                val = self.partition.get(i, j)
-#
-#                for (x, y) in self.offsets:
-#                    val = self.function(val,
-#                                        self.partition.get((i + x) % self.partition.rows,
-#                                                   (j + y) % self.partition.cols))
-#
-#                self.partition.set(i, j, val)
+        log.info("Sending back the computed sub-partition from %d" % rank)
+        comm.ssend(self.partition, dest=0, tag=666)
+        comm.Barrier()
 
 class Stencil(object):
     def __init__(self, function, offsets):
@@ -165,18 +149,18 @@ class Stencil(object):
         if up_left:
             max_row = up_left[0][0]
             max_col = sorted(up_left, key=lambda x: x[1], reverse=False)[0][1]
-            target_up_left = (max_row, max_col)
+            tgt_up_left = (max_row, max_col)
         else:
-            target_up_left = None
+            tgt_up_left = None
 
         up_right = extract(lambda x: x[0] < 0 and x[1] > 0, False)
 
         if up_right:
             max_row = up_right[0][0]
             max_col = sorted(up_right, key=lambda x: x[1], reverse=True)[0][1]
-            target_up_right = (max_row, max_col)
+            tgt_up_right = (max_row, max_col)
         else:
-            target_up_right = None
+            tgt_up_right = None
 
         # Sort the first key which is the row so order is True since we are
         # interested in far jumps which are > 0
@@ -185,53 +169,44 @@ class Stencil(object):
         if down_left:
             max_row = down_left[0][0]
             max_col = sorted(down_left, key=lambda x: x[1], reverse=False)[0][1]
-            target_down_left = (max_row, max_col)
+            tgt_down_left = (max_row, max_col)
         else:
-            target_down_left = None
+            tgt_down_left = None
 
         down_right = extract(lambda x: x[0] > 0 and x[1] > 0, True)
 
         if down_right:
             max_row = down_left[0][0]
             max_col = sorted(down_left, key=lambda x: x[1], reverse=True)[0][1]
-            target_down_right = (max_row, max_col)
+            tgt_down_right = (max_row, max_col)
         else:
-            target_down_right = None
+            tgt_down_right = None
 
-        target_right = right and right[0] or None
-        target_left  = left and left[0] or None
-        target_up    = up and up[0] or None
-        target_down  = down and down[0] or None
+        tgt_right = right and right[0] or None
+        tgt_left  = left and left[0] or None
+        tgt_up    = up and up[0] or None
+        tgt_down  = down and down[0] or None
 
         log.debug("List of possible targets:")
-        log.debug("Left: %s Right: %s" % (target_left, target_right))
-        log.debug("Up  : %s Down : %s" % (target_up, target_down))
+        log.debug("Left: %s Right: %s" % (tgt_left, tgt_right))
+        log.debug("Up  : %s Down : %s" % (tgt_up, tgt_down))
 
-        log.debug("Up-left  : %s Up-right : %s" % (target_up_left, target_up_right))
-        log.debug("Down-left  : %s Down-right : %s" % (target_down_left, target_down_right))
+        log.debug("Up-left  : %s Up-right : %s" % (tgt_up_left, tgt_up_right))
+        log.debug("Down-left  : %s Down-right : %s" % (tgt_down_left, tgt_down_right))
 
         # Now we try to assign correct mapping. Please beware that if you
         # change the enumeration order you also need to change the order of
         # this assignment.
 
-# This should be reversed actually
         self.data_segments = [
-            target_left,
-            target_right,
-            target_down,
-            target_up,
-            target_down_right,
-            target_up_left,
-            target_down_left,
-            target_up_right,
-#            target_right,
-#            target_left,
-#            target_up,
-#            target_down,
-#            target_up_left,
-#            target_down_right,
-#            target_up_right,
-#            target_down_left
+            tgt_left,
+            tgt_right,
+            tgt_down,
+            tgt_up,
+            tgt_down_right,
+            tgt_up_left,
+            tgt_down_left,
+            tgt_up_right,
         ]
 
     def apply(self, matrix):
@@ -249,24 +224,23 @@ class Stencil(object):
             wdict[worker.wid] = worker
             workers.append(worker)
 
-        log.info("After auto partition => Rows: %d Cols: %d" % (matrix.rows/rows, matrix.cols/cols))
+        log.info("After partition => Rows: %d Cols: %d" % \
+                 (matrix.rows/rows, matrix.cols/cols))
 
         for worker in workers:
             worker.autoconnect(wdict, matrix.rows / rows, matrix.cols / cols)
-
         for worker in workers:
             worker.autoconnect(wdict)
-
         for worker in workers:
-            worker.connections.convert_to_id()
-
+            worker.conns.convert_to_id()
         for worker in workers:
             worker.bootstrap()
 
         row, col = 0, 0
 
         for idx in range(rw):
-            partition = comm.recv(source=idx + 1)
+            log.info("Reading sub-partition from client %d" % idx)
+            partition = comm.recv(source=idx + 1, tag=666)
 
             for i in range(rows):
                 for j in range(cols):
@@ -282,8 +256,11 @@ class Stencil(object):
                 col = 0
                 row += 1
 
-        print "Result is"
-        matrix.dump()
+        log.info("Terminated.")
+        comm.Barrier()
+
+        #print "Result is"
+        #matrix.dump()
 
     def seq_apply(self, matrix):
         old = matrix.clone()
