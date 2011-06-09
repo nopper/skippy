@@ -8,7 +8,7 @@ from matrix import Matrix
 logging.basicConfig()
 
 log = logging.getLogger("comm-mpi")
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -53,9 +53,8 @@ class Communicator(object):
 
         m = Matrix.from_list(row_stop - row_start, col_stop - col_start, out)
 
-        log.debug("%d --> send to  : %s (direction %s)" % (rank - 1, str(remote),
-                  LABELS[direction]))
-        m.dump()
+        log.debug("%d --> send to  : %s (direction %s)" % \
+                  (rank - 1, str(remote), LABELS[direction]))
 
         comm.send(m, dest=remote + 1, tag=direction)
         log.debug("%d --> send to  : %s DONE" % (rank - 1, str(remote)))
@@ -66,11 +65,12 @@ class Communicator(object):
         if rect is None or remote is None or remote == rank - 1:
             return
 
-        log.debug("%d <-- recv from: %s (direction %s)" % (rank - 1, str(remote),
-                  LABELS[direction]))
+        log.debug("%d <-- recv from: %s (direction %s)" % \
+                  (rank - 1, str(remote), LABELS[direction]))
 
         data = comm.recv(source=remote + 1, tag=REVERSED[direction])
 
-        log.debug("%d <-- recv from: %s (direction %s) DONE" % (rank - 1, str(remote),
-                  LABELS[direction]))
+        log.debug("%d <-- recv from: %s (direction %s) DONE" % \
+                  (rank - 1, str(remote), LABELS[direction]))
+
         return data
