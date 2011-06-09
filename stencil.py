@@ -211,11 +211,11 @@ class Stencil(object):
 
     def fix_data_deps(self, prow, pcol):
         """
-        Try to fix data dependeces to avoid bogus data
+        Try to fix data dependences to avoid bogus data
         @param prow is the number of rows each worker has assigned to
         @param pcol is the number of cols each worker has assigned to
         """
-        log.info("Trying to fix data dependeces. Partition is %d by %d" %
+        log.info("Trying to fix data dependences. Partition is %d by %d" %
                 (prow, pcol))
 
         def adjust(corner1, corner2, direction, check_idx, set_idx):
