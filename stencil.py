@@ -215,9 +215,6 @@ class Stencil(object):
         @param prow is the number of rows each worker has assigned to
         @param pcol is the number of cols each worker has assigned to
         """
-        log.info("Trying to fix data dependences. Partition is %d by %d" %
-                (prow, pcol))
-
         def adjust(corner1, corner2, direction, check_idx, set_idx):
             targets = filter(lambda x: x,
                     [self.data_segments[REVERSED[corner1]],
@@ -229,20 +226,28 @@ class Stencil(object):
             rect = targets[0]
             checker = (prow, pcol)
 
-            if rect and abs(rect[check_idx]) < checker:
+            # If our partition to transmit is smaller than the partition size
+            # assigned it means that we are loosing part of the block needed to
+            # the computation.
+            if rect and abs(rect[check_idx]) < checker[check_idx]:
                 target = self.data_segments[REVERSED[direction]]
+
+                # If it is so we have to evaluate the maximum number of items
+                # we have other dimension.
                 if (target and abs(target[set_idx]) < abs(rect[set_idx])) or not target:
 
-                    if check_idx == 0: out = [0, rect[set_idx]]
-                    else:              out = [rect[set_idx], 0]
+                    if check_idx == 0: out = (0, rect[set_idx])
+                    else:              out = (rect[set_idx], 0)
 
                     self.data_segments[REVERSED[direction]] = out
+                    log.info("Fixing data dependences by adding %s in %s " \
+                             "direction" % (str(out), LABELS[direction]))
 
         adjust(UP_LEFT, DOWN_LEFT, LEFT, 0, 1)
         adjust(UP_RIGHT, DOWN_RIGHT, RIGHT, 0, 1)
 
-        adjust(UP_LEFT, UP_RIGHT, UP, 1, 1)
-        adjust(DOWN_LEFT, DOWN_RIGHT, DOWN, 1, 1)
+        adjust(UP_LEFT, UP_RIGHT, UP, 1, 0)
+        adjust(DOWN_LEFT, DOWN_RIGHT, DOWN, 1, 0)
 
     def apply(self, matrix, rows=None, cols=None):
         nw = comm.Get_size() - 1
