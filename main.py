@@ -1,36 +1,29 @@
-"""
-This file is just a test file. We start with a simple matrix
-and then we apply the minimum over the all structure.
-"""
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
+import time
 
 from matrix import Matrix
 from stencil import Stencil
 from functional import function
 
-def main():
-    m = Matrix.from_string(6, 6, """
-2 3 4 5 6 4
-5 6 8 9 1 2
-4 4 6 7 3 4
-6 6 3 2 3 6
-0 4 6 3 0 7
-3 5 1 6 99 1""")
+offsets = ((-1,0), (0,-1), (0,1), (1,0))
+#offsets = ((-2, -1), (-2, 0), (-2, -2))
 
-    #st = Stencil(min, ((-1,0), (0,-1), (0,1), (1,0))) # List index error se
-    # lancio con 3 worker
+def main(matrix_file, rows=None, cols=None):
+    start = time.time()
+    matrix = pickle.load(open(matrix_file, "r"))
+    print "%.2f seconds to load the matrix" % (time.time() - start)
 
-    # Controllare con piu worker se termina
+    st = Stencil(function, offsets)
+    st.apply(matrix, rows, cols)
 
-    st = Stencil(function, ((-2, -1), (-2, 0), (-2, -2)))
-    #print("Before running:")
-    #m.dump()
+def sequential(matrix_file):
+    print "Trying sequential version"
+    matrix = pickle.load(open(matrix_file, "r"))
 
-    #st.seq_apply(m)
-    #print("After running:")
-    #m.dump()
-
-    #print("Applying in parallel:")
-    st.apply(m)
-
-if __name__ == "__main__":
-    main()
+    st = Stencil(function, offsets)
+    st.seq_apply(matrix)
+    matrix.dump()

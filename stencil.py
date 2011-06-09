@@ -209,9 +209,51 @@ class Stencil(object):
             tgt_up_right,
         ]
 
-    def apply(self, matrix):
+    def fix_data_deps(self, prow, pcol):
+        """
+        Try to fix data dependeces to avoid bogus data
+        @param prow is the number of rows each worker has assigned to
+        @param pcol is the number of cols each worker has assigned to
+        """
+        log.info("Trying to fix data dependeces. Partition is %d by %d" %
+                (prow, pcol))
+
+        def adjust(corner1, corner2, direction, check_idx, set_idx):
+            targets = filter(lambda x: x,
+                    [self.data_segments[REVERSED[corner1]],
+                     self.data_segments[REVERSED[corner2]]])
+
+            if not targets: return
+
+            targets.sort(reverse=True, key=lambda x: abs(x[check_idx]))
+            rect = targets[0]
+            checker = (prow, pcol)
+
+            if rect and abs(rect[check_idx]) < checker:
+                target = self.data_segments[REVERSED[direction]]
+                if (target and abs(target[set_idx]) < abs(rect[set_idx])) or not target:
+
+                    if check_idx == 0: out = [0, rect[set_idx]]
+                    else:              out = [rect[set_idx], 0]
+
+                    self.data_segments[REVERSED[direction]] = out
+
+        adjust(UP_LEFT, DOWN_LEFT, LEFT, 0, 1)
+        adjust(UP_RIGHT, DOWN_RIGHT, RIGHT, 0, 1)
+
+        adjust(UP_LEFT, UP_RIGHT, UP, 1, 1)
+        adjust(DOWN_LEFT, DOWN_RIGHT, DOWN, 1, 1)
+
+    def apply(self, matrix, rows=None, cols=None):
         nw = comm.Get_size() - 1
-        rows, cols, rw = matrix.derive_partition(self.offsets, nw)
+
+        if rows is not None and cols is not None:
+            log.info("Skipping auto-derivation")
+            rw = (matrix.cols / cols) * (matrix.rows / rows)
+        else:
+            rows, cols, rw = matrix.derive_partition(self.offsets, nw)
+
+        self.fix_data_deps(rows, cols)
 
         wdict = {}
         workers = []
