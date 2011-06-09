@@ -80,14 +80,6 @@ class StencilWorker(object):
         return 'Worker(%d [%d %d %d %d])' % (self.wid, self.row, self.col,
                 self.width, self.height)
 
-    def bootstrap(self, partition):
-        log.info("Sending partition to worker %d" % self.wid)
-
-        data = (self.offsets, self.data_segments, partition, \
-                self.pwidth, self.pheight, self.conns)
-
-        comm.send(data, dest=self.wid + 1, tag=0)
-
     def start(self):
         log.info("Worker started on processor %d %s" % (rank, name))
 
@@ -121,7 +113,7 @@ class StencilWorker(object):
                 self.partition.set(i - puzzle.max_up, j - puzzle.max_left, val)
 
         log.info("Sending back the computed sub-partition from %d" % rank)
-        comm.ssend(self.partition, dest=0, tag=666)
+        comm.gather(self.partition, root=0)
         comm.Barrier()
 
 class Stencil(object):
@@ -282,15 +274,20 @@ class Stencil(object):
             worker.autoconnect(wdict)
         for worker in workers:
             worker.conns.convert_to_id()
+
+        data = [None,]
+
         for worker in workers:
-            worker.bootstrap(matrix.partition(rows, cols, worker.wid))
+            partition = matrix.partition(rows, cols, worker.wid)
+            data.append((worker.offsets, worker.data_segments, partition, \
+                         worker.pwidth, worker.pheight, worker.conns))
+
+        comm.scatter(data, root=0)
+        data = comm.gather(None, root=0)
 
         row, col = 0, 0
 
-        for idx in range(rw):
-            log.info("Reading sub-partition from client %d" % idx)
-            partition = comm.recv(source=idx + 1, tag=666)
-
+        for partition in data[1:]:
             for i in range(rows):
                 for j in range(cols):
                     row_start = row * partition.rows
