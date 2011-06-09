@@ -80,10 +80,10 @@ class StencilWorker(object):
         return 'Worker(%d [%d %d %d %d])' % (self.wid, self.row, self.col,
                 self.width, self.height)
 
-    def bootstrap(self):
+    def bootstrap(self, partition):
         log.info("Sending partition to worker %d" % self.wid)
 
-        data = (self.offsets, self.data_segments, self.partition, \
+        data = (self.offsets, self.data_segments, partition, \
                 self.pwidth, self.pheight, self.conns)
 
         comm.send(data, dest=self.wid + 1, tag=0)
@@ -259,9 +259,11 @@ class Stencil(object):
         workers = []
 
         for i in range(rw):
+            # Just assign an empty invalid partition the correct partition will
+            # be derived when needed.
             worker = StencilWorker(self.offsets,
                                    self.data_segments,
-                                   matrix.partition(rows, cols, i),
+                                   Matrix.from_list(rows, cols, None),
                                    matrix.cols, matrix.rows)
             wdict[worker.wid] = worker
             workers.append(worker)
@@ -276,7 +278,7 @@ class Stencil(object):
         for worker in workers:
             worker.conns.convert_to_id()
         for worker in workers:
-            worker.bootstrap()
+            worker.bootstrap(matrix.partition(rows, cols, worker.wid))
 
         row, col = 0, 0
 
