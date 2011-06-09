@@ -7,10 +7,7 @@ import time
 
 from matrix import Matrix
 from stencil import Stencil
-from functional import function
-
-offsets = ((-1,0), (0,-1), (0,1), (1,0))
-#offsets = ((-2, -1), (-2, 0), (-2, -2))
+from functional import function, offsets
 
 def main(matrix_file, rows=None, cols=None):
     start = time.time()
