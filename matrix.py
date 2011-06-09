@@ -137,9 +137,6 @@ class Matrix(object):
         # Now we need to get the maximum displacement element, so we
         # sort by using abs()
 
-        #log.debug("Offsets dependendent on rows: %s" % str(row_dependent))
-        #log.debug("Offsets dependendent on cols: %s" % str(col_dependent))
-
         def trivial_sol(depends, is_col=0):
             aref, bref = self.cols, self.rows
             if is_col == 0: aref, bref = bref, aref
@@ -220,14 +217,10 @@ class Matrix(object):
         # Now we try to figure out how many workers we can spawn
 
         if self.cols % width != 0:
-            self.cols += width - (self.cols % width)
-            log.debug("Column padding required")
+            width = (self.cols / nproc)
 
         if self.rows % height != 0:
-            self.rows += height - (self.rows % height)
-            log.debug("Row padding required")
-
-        log.debug("Using a padded matrix %dx%d" % (self.rows, self.cols))
+            height = (self.rows / nproc)
 
         def throttle(is_width):
             aparam, bparam = width, height
