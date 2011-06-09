@@ -6,21 +6,21 @@ import logging
 logging.basicConfig()
 
 log = logging.getLogger("matrix")
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 class Matrix(object):
     """
     The text above is considered a test case.
 
     >>> m = Matrix.from_string(6, 5, "2 3 4 5 6 5 6 8 9 1 4 4 6 7 3 6 6 3 2 3 0 4 6 3 0 3 5 1 6 99")
-    >>> for i in range(6): log.debug(m.partition(1, 5, i))
+    >>> for i in range(6): m.partition(1, 5, i).matrix
     [[2, 3, 4, 5, 6]]
     [[5, 6, 8, 9, 1]]
     [[4, 4, 6, 7, 3]]
     [[6, 6, 3, 2, 3]]
     [[0, 4, 6, 3, 0]]
     [[3, 5, 1, 6, 99]]
-    >>> for i in range(15): log.debug(m.partition(2, 1, i))
+    >>> for i in range(15): m.partition(2, 1, i).matrix
     [[2], [5]]
     [[3], [6]]
     [[4], [8]]
@@ -44,7 +44,7 @@ class Matrix(object):
     6 6 3 2 3 
     0 4 6 3 0 
     3 5 1 6 99 
-
+    <BLANKLINE>
     >>> row, col, proc = m.derive_partition([(0, 1), (0, 2)], 100)
     >>> (row, col, proc)
     (1, 2, 15)
@@ -60,8 +60,9 @@ class Matrix(object):
 
     >>> m = Matrix.from_string(50, 40, ' '.join([i for i in map(lambda x: str(x), range(50 *40))]))
     >>> m.derive_partition([(-3, -2), (2, 2)], 10)
-
+    (5, 40, 10)
     >>> m.derive_partition([(-1, -1), (2, 2), (0, -1)], 111)
+    (5, 4, 100)
     """
 
     def __init__(self, rows, cols, value=0):
@@ -217,10 +218,10 @@ class Matrix(object):
         # Now we try to figure out how many workers we can spawn
 
         if self.cols % width != 0:
-            width = (self.cols / nproc)
+            width = max(1, self.cols / nproc)
 
         if self.rows % height != 0:
-            height = (self.rows / nproc)
+            height = max(1, self.rows / nproc)
 
         def throttle(is_width):
             aparam, bparam = width, height
@@ -233,7 +234,6 @@ class Matrix(object):
                 aparam += astep
 
                 if (elems / (aparam * bparam)) < nproc:
-                    aparam -= astep
                     break
 
             return aparam
