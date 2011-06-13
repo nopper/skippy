@@ -282,10 +282,7 @@ class Stencil(object):
         log.info("%.10f seconds to scatter the matrix" % \
                  (time.time() - start))
 
-        start = time.time()
-        self.reconstruct(matrix.cols/cols)
-        log.info("%.10f seconds to reconstruct the result" % \
-                 (time.time() - start))
+        matrix = self.reconstruct(matrix.cols/cols)
 
         log.info("Terminated.")
         comm.Barrier()
@@ -294,7 +291,12 @@ class Stencil(object):
         #print matrix
 
     def reconstruct(self, col_stop):
+        start = time.time()
         data = comm.gather(None, root=0)
+        log.info("%.10f seconds to gather the results" % \
+                 (time.time() - start))
+
+        start = time.time()
 
         rows = []
         row, col = 0, 0
@@ -323,6 +325,10 @@ class Stencil(object):
                 matrix = row
             else:
                 matrix = numpy.vstack((matrix, row))
+
+        log.info("%.10f seconds to reconstruct the result" % \
+                 (time.time() - start))
+        return matrix
 
     def seq_apply(self, matrix):
         old = matrix.clone()
