@@ -20,7 +20,9 @@ def main(matrix_file, rows=None, cols=None):
 
 def sequential(matrix_file):
     print "Trying sequential version"
+    start = time.time()
     matrix = pickle.load(open(matrix_file, "r"))
+    print "%.10f seconds to load the matrix" % (time.time() - start)
 
     st = Stencil(offsets)
     start = time.time()
