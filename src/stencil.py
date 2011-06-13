@@ -98,27 +98,14 @@ class StencilWorker(object):
 
         log.info("Computing...")
 
-        matrix = puzzle.apply()
-
-        for i in range(puzzle.max_up, puzzle.max_up + self.partition.rows):
-            for j in range(puzzle.max_left, puzzle.max_left + self.partition.cols):
-                val = matrix.get(i, j)
-
-                for (x, y) in self.offsets:
-                    val = function(val, matrix.get(
-                        (i + x) % matrix.rows,
-                        (j + y) % matrix.cols
-                    ))
-
-                self.partition.set(i - puzzle.max_up, j - puzzle.max_left, val)
+        self.partition = puzzle.apply(self.offsets, function)
 
         log.info("Sending back the computed sub-partition from %d" % rank)
         comm.gather(self.partition, root=0)
         comm.Barrier()
 
 class Stencil(object):
-    def __init__(self, function, offsets):
-        self.function = function
+    def __init__(self, offsets):
         self.offsets = offsets
         self.analyze_offsets()
 
@@ -316,8 +303,8 @@ class Stencil(object):
                 val = old.get(i, j)
 
                 for (x, y) in self.offsets:
-                    val = self.function(val,
-                                        old.get((i + x) % matrix.rows,
-                                                (j + y) % matrix.cols))
+                    val = function(val,
+                                   old.get((i + x) % matrix.rows,
+                                           (j + y) % matrix.cols))
 
                 matrix.set(i, j, val)

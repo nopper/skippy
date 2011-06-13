@@ -14,13 +14,13 @@ def main(matrix_file, rows=None, cols=None):
     matrix = pickle.load(open(matrix_file, "r"))
     print "%.2f seconds to load the matrix" % (time.time() - start)
 
-    st = Stencil(function, offsets)
+    st = Stencil(offsets)
     st.apply(matrix, rows, cols)
 
 def sequential(matrix_file):
     print "Trying sequential version"
     matrix = pickle.load(open(matrix_file, "r"))
 
-    st = Stencil(function, offsets)
+    st = Stencil(offsets)
     st.seq_apply(matrix)
     matrix.dump()
