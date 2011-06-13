@@ -99,7 +99,7 @@ class StencilWorker(object):
             if m: puzzle.add_piece(m, enum)
 
         start = time.time()
-        self.partition = puzzle.apply(self.offsets, function)
+        puzzle.apply(self.offsets, function)
         log.info("Worker %d: %.10f seconds to compute the partition" % \
                  (rank - 1, time.time() - start))
 

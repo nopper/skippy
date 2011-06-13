@@ -1,6 +1,7 @@
+import time
 import logging
-import numpy
 
+from numpy import zeros, vstack, hstack
 from matrix import Matrix
 from communicator.enum import *
 
@@ -31,88 +32,86 @@ class Puzzle(object):
 
         self.pieces[position] = piece
 
+    def pad(self, part, where, dtype):
+        if part is None:
+            if where == RIGHT and self.max_right > 0: return zeros((1, self.max_right))
+            if where == LEFT  and self.max_left > 0:  return zeros((1, self.max_left))
+            if where == UP    and self.max_up > 0:    return zeros((self.max_up, 1))
+            if where == DOWN  and self.max_down > 0:  return zeros((self.max_down, 1))
+            return None
+
+        if isinstance(part, Matrix): m = part.matrix
+        else:                        m = part
+
+        if where == RIGHT and m.shape[1] < self.max_right:
+            pad = zeros((m.shape[0], self.max_right - m.shape[1]), dtype)
+            return hstack((m, pad))
+
+        elif where == LEFT and m.shape[1] < self.max_left:
+            pad = zeros((m.shape[0], self.max_left - m.shape[1]), dtype)
+            return hstack((pad, m))
+
+        elif where == UP and m.shape[0] < self.max_up:
+            pad = zeros((self.max_up - m.shape[0], m.shape[1]), dtype)
+            return vstack((pad, m))
+
+        elif where == DOWN and m.shape[0] < self.max_down:
+            pad = zeros((self.max_down - m.shape[0], m.shape[1]), dtype)
+            return vstack((m, pad))
+
+        return m
+
     def apply(self, offsets, function):
-        def get(position, i, j):
-            p = self.pieces[position]
+        start = time.time()
+        matrix = self.center.matrix.copy()
 
-            if p is None:
-                return 0
+        up = self.pad(self.pieces[UP], UP, matrix.dtype)
+        down = self.pad(self.pieces[DOWN], DOWN, matrix.dtype)
 
-            if position == UP_LEFT:
-                coff = self.max_left - p.cols
-                roff = self.max_up - p.rows
-            elif position == UP_RIGHT:
-                coff = self.center.cols + self.max_left
-                roff = self.max_up - p.rows
-            elif position == UP:
-                coff = self.max_left
-                roff = self.max_up - p.rows
-            elif position == DOWN_LEFT:
-                coff = self.max_left - p.cols
-                roff = self.max_up + self.center.rows
-            elif position == DOWN_RIGHT:
-                coff = self.center.cols + self.max_left
-                roff = self.max_up + self.center.rows
-            elif position == DOWN:
-                coff = self.max_left
-                roff = self.max_up + self.center.rows
-            elif position == LEFT:
-                coff = self.max_left - p.cols
-                roff = self.max_up
-            elif position == RIGHT:
-                coff = self.center.cols + self.max_left
-                roff = self.max_up
+        is_empty = lambda x: x is not None
 
-            i -= roff
-            j -= coff
+        matrix = vstack(filter(is_empty, (up, matrix, down)))
 
-            if i < 0 or i > p.cols or j < 0 or j > p.rows:
-                return 0
-            else:
-                return p.get(i, j)
+        left  = self.pad(self.pieces[LEFT], LEFT, matrix.dtype)
+        right = self.pad(self.pieces[RIGHT], RIGHT, matrix.dtype)
 
-        cols = self.center.cols + self.max_left + self.max_right
-        rows = self.center.rows + self.max_down + self.max_up
+        upl   = self.pad(self.pad(self.pieces[UP_LEFT], UP, matrix.dtype),
+                         LEFT, matrix.dtype)
+        downl = self.pad(self.pad(self.pieces[DOWN_LEFT], DOWN, matrix.dtype),
+                         LEFT, matrix.dtype)
+        upr   = self.pad(self.pad(self.pieces[UP_RIGHT], UP, matrix.dtype),
+                         RIGHT, matrix.dtype)
+        downr = self.pad(self.pad(self.pieces[DOWN_RIGHT], DOWN, matrix.dtype),
+                         RIGHT, matrix.dtype)
 
-        destination = numpy.empty((self.center.rows, self.center.cols))
+        # Hacky fix
+        if self.max_up == 0:    upl, upr     = None, None
+        if self.max_down == 0:  downl, downr = None, None
+        if self.max_left == 0:  downl, upl   = None, None
+        if self.max_right == 0: downr, upr   = None, None
+
+        coll = filter(is_empty, (upl, left, downl))
+
+        if coll: left = vstack(coll)
+        else:    left = None
+
+        coll = filter(is_empty, (upr, right, downr))
+
+        if coll: right = vstack(coll)
+        else:    right = None
+
+        matrix = hstack(filter(is_empty, (left, matrix, right)))
+
+        log.info("%.10f seconds to create auxiliary matrix" % \
+                 (time.time() - start))
+
+        rows, cols = matrix.shape
 
         for i in range(self.max_up, self.max_up + self.center.rows):
-            row = []
             for j in range(self.max_left, self.max_left + self.center.cols):
-                val = self.center.get(i - self.max_up, j - self.max_left)
+                val = matrix[i][j]
 
                 for (x, y) in offsets:
-                    ioff = (i + x) % rows
-                    joff = (j + y) % cols
+                    val = function(val, matrix[(i + x) % rows][(j + y) % cols])
 
-                    if ioff < self.max_up:
-                        if joff < self.max_left:
-                            ret = get(UP_LEFT, ioff, joff)
-                        elif joff >= self.max_left + self.center.cols:
-                            ret = get(UP_RIGHT, ioff, joff)
-                        else:
-                            ret = get(UP, ioff, joff)
-
-                    elif ioff >= self.max_up + self.center.rows:
-                        if joff < self.max_left:
-                            ret = get(DOWN_LEFT, ioff, joff)
-                        elif joff >= self.max_left + self.center.cols:
-                            ret = get(DOWN_RIGHT, ioff, joff)
-                        else:
-                            ret = get(DOWN, ioff, joff)
-                    else:
-                        if joff < self.max_left:
-                            ret = get(LEFT, ioff, joff)
-                        elif joff >= self.max_left + self.center.cols:
-                            ret = get(RIGHT, ioff, joff)
-                        else:
-                            ret = self.center.get(
-                                ioff - self.max_up,
-                                joff - self.max_left
-                            )
-
-                    val = function(val, ret)
-                destination[i - self.max_up][j - self.max_left] = val
-
-        return Matrix.from_list(self.center.rows, self.center.cols,
-                                destination)
+                self.center.set(i - self.max_up, j - self.max_left, val)
