@@ -220,12 +220,7 @@ class Matrix(object):
         return Matrix(row_stop - row_start, col_stop - col_start,
                       self.matrix[row_start:row_stop,col_start:col_stop])
 
-    def get(self, i, j):
-        if i < 0 or i >= self.rows:
-            raise Exception("Row %d out of bound (%d)" % (i, self.rows))
-        if j < 0 or j >= self.cols:
-            raise Exception("Column %d out of bound (%d)" % (j, self.cols))
-        return self.matrix[i][j]
+    def get(self, i, j): return self.matrix[i][j]
     def set(self, i, j, v): self.matrix[i][j] = v
 
 if __name__ == "__main__":

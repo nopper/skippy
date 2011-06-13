@@ -32,6 +32,45 @@ class Puzzle(object):
         self.pieces[position] = piece
 
     def apply(self, offsets, function):
+        def get(position, i, j):
+            p = self.pieces[position]
+
+            if p is None:
+                return 0
+
+            if position == UP_LEFT:
+                coff = self.max_left - p.cols
+                roff = self.max_up - p.rows
+            elif position == UP_RIGHT:
+                coff = self.center.cols + self.max_left
+                roff = self.max_up - p.rows
+            elif position == UP:
+                coff = self.max_left
+                roff = self.max_up - p.rows
+            elif position == DOWN_LEFT:
+                coff = self.max_left - p.cols
+                roff = self.max_up + self.center.rows
+            elif position == DOWN_RIGHT:
+                coff = self.center.cols + self.max_left
+                roff = self.max_up + self.center.rows
+            elif position == DOWN:
+                coff = self.max_left
+                roff = self.max_up + self.center.rows
+            elif position == LEFT:
+                coff = self.max_left - p.cols
+                roff = self.max_up
+            elif position == RIGHT:
+                coff = self.center.cols + self.max_left
+                roff = self.max_up
+
+            i -= roff
+            j -= coff
+
+            if i < 0 or i > p.cols or j < 0 or j > p.rows:
+                return 0
+            else:
+                return p.get(i, j)
+
         cols = self.center.cols + self.max_left + self.max_right
         rows = self.center.rows + self.max_down + self.max_up
 
@@ -48,99 +87,24 @@ class Puzzle(object):
 
                     if ioff < self.max_up:
                         if joff < self.max_left:
-                            # UP LEFT
-                            p = self.pieces[UP_LEFT]
-
-                            try:
-                                coff = self.max_left - p.cols
-                                roff = self.max_up - p.rows
-
-                                ret = p.get(ioff - roff, joff - coff)
-                            except:
-                                ret = 0
-
+                            ret = get(UP_LEFT, ioff, joff)
                         elif joff >= self.max_left + self.center.cols:
-                            # UP RIGHT
-                            p = self.pieces[UP_RIGHT]
-
-                            try:
-                                coff = self.center.cols + self.max_left
-                                roff = self.max_up - p.rows
-
-                                ret = p.get(ioff - roff, joff - coff)
-                            except:
-                                ret = 0
-
+                            ret = get(UP_RIGHT, ioff, joff)
                         else:
-                            # UP
-                            p = self.pieces[UP]
-
-                            try:
-                                coff = self.max_left
-                                roff = self.max_up - p.rows
-
-                                ret = p.get(ioff - roff, joff - coff)
-                            except:
-                                ret = 0
+                            ret = get(UP, ioff, joff)
 
                     elif ioff >= self.max_up + self.center.rows:
                         if joff < self.max_left:
-                            # DOWN LEFT
-                            p = self.pieces[DOWN_LEFT]
-
-                            try:
-                                coff = self.max_left - p.cols
-                                roff = self.max_up + self.center.rows
-
-                                ret = p.get(ioff - roff, joff - coff)
-                            except:
-                                ret = 0
-
+                            ret = get(DOWN_LEFT, ioff, joff)
                         elif joff >= self.max_left + self.center.cols:
-                            # DOWN RIGHT
-                            p = self.pieces[DOWN_RIGHT]
-
-                            try:
-                                coff = self.center.cols + self.max_left
-                                roff = self.max_up + self.center.rows
-
-                                ret = p.get(ioff - roff, joff - coff)
-                            except:
-                                ret = 0
+                            ret = get(DOWN_RIGHT, ioff, joff)
                         else:
-                            # DOWN
-                            p = self.pieces[DOWN]
-
-                            try:
-                                coff = self.max_left
-                                roff = self.max_up + self.center.rows
-
-                                ret = p.get(ioff - roff, joff - coff)
-                            except:
-                                ret = 0
+                            ret = get(DOWN, ioff, joff)
                     else:
                         if joff < self.max_left:
-                            # LEFT
-                            p = self.pieces[LEFT]
-
-                            try:
-                                coff = self.max_left - p.cols
-                                roff = self.max_up
-
-                                ret = p.get(ioff - roff, joff - coff)
-                            except:
-                                ret = 0
+                            ret = get(LEFT, ioff, joff)
                         elif joff >= self.max_left + self.center.cols:
-                            # RIGHT
-                            p = self.pieces[RIGHT]
-
-                            try:
-                                coff = self.center.cols + self.max_left
-                                roff = self.max_up
-
-                                ret = p.get(ioff - roff, joff - coff)
-                            except:
-                                ret = 0
+                            ret = get(RIGHT, ioff, joff)
                         else:
                             ret = self.center.get(
                                 ioff - self.max_up,
