@@ -43,15 +43,7 @@ class Communicator(object):
             col_stop = self.parent.width
             col_start = 0
 
-        out = []
-
-        for i in range(row_start, row_stop, 1):
-            col = []
-            for j in range(col_start, col_stop, 1):
-                col.append(self.parent.partition.get(i, j))
-            out.append(col)
-
-        m = Matrix.from_list(row_stop - row_start, col_stop - col_start, out)
+        m = self.parent.partition.extract(row_start, row_stop, col_start, col_stop)
 
         log.debug("%d --> send to  : %s (direction %s)" % \
                   (rank - 1, str(remote), LABELS[direction]))

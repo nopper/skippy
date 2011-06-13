@@ -1,4 +1,5 @@
 import logging
+import numpy
 
 from matrix import Matrix
 from communicator.enum import *
@@ -34,7 +35,7 @@ class Puzzle(object):
         cols = self.center.cols + self.max_left + self.max_right
         rows = self.center.rows + self.max_down + self.max_up
 
-        destination = []
+        destination = numpy.empty((self.center.rows, self.center.cols))
 
         for i in range(self.max_up, self.max_up + self.center.rows):
             row = []
@@ -147,8 +148,7 @@ class Puzzle(object):
                             )
 
                     val = function(val, ret)
-                row.append(val)
-            destination.append(row)
+                destination[i - self.max_up][j - self.max_left] = val
 
         return Matrix.from_list(self.center.rows, self.center.cols,
                                 destination)

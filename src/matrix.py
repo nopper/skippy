@@ -2,6 +2,7 @@ import sys
 import random
 import itertools
 import logging
+import numpy
 
 logging.basicConfig()
 
@@ -65,24 +66,20 @@ class Matrix(object):
     (5, 4, 100)
     """
 
-    def __init__(self, rows, cols, value=0):
+    def __init__(self, rows, cols, contents=None):
         self.rows, self.cols = rows, cols
 
-        self.matrix = []
-        for i in range(rows):
-            self.matrix.append([value, ] * cols)
+        if contents is not None:
+            self.matrix = contents
+        else:
+            self.matrix = numpy.empty((rows, cols))
 
     def clone(self):
         import copy
         return copy.deepcopy(self)
 
     def dump(self):
-        str = ""
-        for i in range(self.rows):
-            for j in range(self.cols):
-                str += "%s " % self.matrix[i][j]
-            str += '\n'
-        print str
+        print str(self.matrix)
 
     @staticmethod
     def from_string(rows, cols, contents):
@@ -100,20 +97,12 @@ class Matrix(object):
 
     @staticmethod
     def from_list(rows, cols, contents):
-        m = Matrix(rows, cols)
-        m.matrix = contents
-        return m
+        return Matrix(rows, cols, contents)
 
     @staticmethod
     def random(rows, cols):
-        m = Matrix(rows, cols)
-        m.matrix = []
-
-        for row in xrange(rows):
-            m.matrix.append([random.randint(0, 9) for i in xrange(cols)])
-
-        return m
-
+        contents = numpy.random.randint(0, 9, (rows, cols))
+        return Matrix(rows, cols, contents)
     def derive_partition(self, offsets, nproc):
         """
         This method should derive a proper partition scheme starting
@@ -254,19 +243,14 @@ class Matrix(object):
         return (height, width, eproc)
 
     def partition(self, rows, cols, idx):
-        part = []
-
         col_idx = (idx * cols)
         row_idx = int(col_idx / self.cols) * rows
         col_idx %= self.cols
+        return self.extract(row_idx, rows + row_idx, col_idx, cols + col_idx)
 
-        for row in range(rows):
-            ret = []
-            for col in range(cols):
-                ret.append(self.matrix[row_idx + row][col_idx + col])
-            part.append(ret)
-
-        return Matrix.from_list(rows, cols, part)
+    def extract(self, row_start, row_stop, col_start, col_stop):
+        return Matrix(row_stop - row_start, col_stop - col_start,
+                      self.matrix[row_start:row_stop,col_start:col_stop])
 
     def get(self, i, j):
         if i < 0 or i >= self.rows:

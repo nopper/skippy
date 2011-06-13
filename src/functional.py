@@ -21,4 +21,4 @@ def variance(a, b):
 function = variance
 
 #offsets = ((-2, -1), (-2, 0), (-2, -2))
-#function = min
+function = min

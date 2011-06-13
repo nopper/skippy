@@ -1,4 +1,5 @@
 import sys
+import numpy
 import logging
 
 from mpi4py import MPI
@@ -101,7 +102,7 @@ class StencilWorker(object):
         self.partition = puzzle.apply(self.offsets, function)
 
         log.info("Sending back the computed sub-partition from %d" % rank)
-        comm.gather(self.partition, root=0)
+        comm.gather(self.partition.matrix, root=0)
         comm.Barrier()
 
 class Stencil(object):
@@ -272,16 +273,16 @@ class Stencil(object):
         comm.scatter(data, root=0)
         data = comm.gather(None, root=0)
 
+        rows = []
         row, col = 0, 0
+        curr_row = None
 
         for partition in data[1:]:
-            for i in range(rows):
-                for j in range(cols):
-                    row_start = row * partition.rows
-                    col_start = col * partition.cols
-
-                    matrix.set(row_start + i,
-                               col_start + j, partition.get(i, j))
+            # Creates rows then merge back
+            if curr_row is None:
+                curr_row = partition
+            else:
+                curr_row = numpy.column_stack((curr_row, partition))
 
             col += 1
 
@@ -289,11 +290,22 @@ class Stencil(object):
                 col = 0
                 row += 1
 
+                rows.append(curr_row)
+                curr_row = None
+
+        matrix = None
+
+        for row in rows:
+            if matrix is None:
+                matrix = row
+            else:
+                matrix = numpy.vstack((matrix, row))
+
         log.info("Terminated.")
         comm.Barrier()
 
         #print "Result is"
-        #matrix.dump()
+        #print matrix
 
     def seq_apply(self, matrix):
         old = matrix.clone()
