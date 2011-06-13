@@ -1,4 +1,5 @@
 import sys
+import time
 import numpy
 import logging
 
@@ -97,12 +98,18 @@ class StencilWorker(object):
             m = self.comm.receive(getattr(self.conns, lbl), enum)
             if m: puzzle.add_piece(m, enum)
 
-        log.info("Computing...")
-
+        start = time.time()
         self.partition = puzzle.apply(self.offsets, function)
+        log.info("Worker %d: %.10f seconds to compute the partition" % \
+                 (rank - 1, time.time() - start))
 
         log.info("Sending back the computed sub-partition from %d" % rank)
+
+        start = time.time()
         comm.gather(self.partition.matrix, root=0)
+        log.info("Worker %d: %.10f seconds to send back the partition" % \
+                 (rank - 1, time.time() - start))
+
         comm.Barrier()
 
 class Stencil(object):
@@ -270,7 +277,23 @@ class Stencil(object):
             data.append((worker.offsets, worker.data_segments, partition, \
                          worker.pwidth, worker.pheight, worker.conns))
 
+        start = time.time()
         comm.scatter(data, root=0)
+        log.info("%.10f seconds to scatter the matrix" % \
+                 (time.time() - start))
+
+        start = time.time()
+        self.reconstruct(matrix.cols/cols)
+        log.info("%.10f seconds to reconstruct the result" % \
+                 (time.time() - start))
+
+        log.info("Terminated.")
+        comm.Barrier()
+
+        #print "Result is"
+        #print matrix
+
+    def reconstruct(self, col_stop):
         data = comm.gather(None, root=0)
 
         rows = []
@@ -286,7 +309,7 @@ class Stencil(object):
 
             col += 1
 
-            if col == matrix.cols/cols:
+            if col == col_stop:
                 col = 0
                 row += 1
 
@@ -300,12 +323,6 @@ class Stencil(object):
                 matrix = row
             else:
                 matrix = numpy.vstack((matrix, row))
-
-        log.info("Terminated.")
-        comm.Barrier()
-
-        #print "Result is"
-        #print matrix
 
     def seq_apply(self, matrix):
         old = matrix.clone()

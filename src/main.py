@@ -1,9 +1,7 @@
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
-
+import cPickle as pickle
 import time
+
+from mpi4py import MPI
 
 from matrix import Matrix
 from stencil import Stencil
@@ -12,15 +10,21 @@ from functional import function, offsets
 def main(matrix_file, rows=None, cols=None):
     start = time.time()
     matrix = pickle.load(open(matrix_file, "r"))
-    print "%.2f seconds to load the matrix" % (time.time() - start)
+    print "%.10f seconds to load the matrix" % (time.time() - start)
 
+    start = time.time()
     st = Stencil(offsets)
     st.apply(matrix, rows, cols)
+    print "%.10f seconds to apply on %d processors" % \
+            (time.time() - start, MPI.COMM_WORLD.Get_size() - 1)
 
 def sequential(matrix_file):
     print "Trying sequential version"
     matrix = pickle.load(open(matrix_file, "r"))
 
     st = Stencil(offsets)
+    start = time.time()
     st.seq_apply(matrix)
-    matrix.dump()
+    print "%.10f seconds to apply sequentially" % \
+            (time.time() - start)
+    #matrix.dump()
