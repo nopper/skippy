@@ -28,7 +28,8 @@ class Connections(object):
         self.down_right = None
 
     def __repr__(self):
-        return "right=%s, left=%s, up=%s, down=%s, ul=%s, ur=%s, dl=%s, dr=%s" % \
+        return "right=%s, left=%s, up=%s, down=%s," \
+                "ul=%s, ur=%s, dl=%s, dr=%s" % \
             (self.right, self.left, self.up, self.down,
              self.up_left, self.up_right, self.down_left, self.down_right)
 

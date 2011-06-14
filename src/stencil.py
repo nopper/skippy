@@ -1,4 +1,3 @@
-import sys
 import time
 import numpy
 import logging
@@ -66,15 +65,15 @@ class StencilWorker(object):
 
         links = []
 
-        for id in ((self.wid + 1) % cols + start,
+        for wid in ((self.wid + 1) % cols + start,
                    (self.wid - 1) % cols + start,
                    (self.wid - cols) % tot,
                    (self.wid + cols) % tot):
 
-            if id == self.wid:
+            if wid == self.wid:
                 links.append(None)
             else:
-                links.append(wdict[id])
+                links.append(wdict[wid])
 
         self.conns = Connections(*links)
 
@@ -115,6 +114,7 @@ class StencilWorker(object):
 class Stencil(object):
     def __init__(self, offsets):
         self.offsets = offsets
+        self.data_segments = None
         self.analyze_offsets()
 
     def analyze_offsets(self):
@@ -178,8 +178,10 @@ class Stencil(object):
         log.debug("Left: %s Right: %s" % (tgt_left, tgt_right))
         log.debug("Up  : %s Down : %s" % (tgt_up, tgt_down))
 
-        log.debug("Up-left  : %s Up-right : %s" % (tgt_up_left, tgt_up_right))
-        log.debug("Down-left  : %s Down-right : %s" % (tgt_down_left, tgt_down_right))
+        log.debug("Up-left  : %s Up-right : %s" % \
+                  (tgt_up_left, tgt_up_right))
+        log.debug("Down-left  : %s Down-right : %s" % \
+                  (tgt_down_left, tgt_down_right))
 
         # Now we try to assign correct mapping. Please beware that if you
         # change the enumeration order you also need to change the order of
@@ -221,7 +223,8 @@ class Stencil(object):
 
                 # If it is so we have to evaluate the maximum number of items
                 # we have other dimension.
-                if (target and abs(target[set_idx]) < abs(rect[set_idx])) or not target:
+                if (target and abs(target[set_idx]) < abs(rect[set_idx])) or \
+                   not target:
 
                     if check_idx == 0: out = (0, rect[set_idx])
                     else:              out = (rect[set_idx], 0)
@@ -250,7 +253,7 @@ class Stencil(object):
         wdict = {}
         workers = []
 
-        for i in range(rw):
+        for _ in range(rw):
             # Just assign an empty invalid partition the correct partition will
             # be derived when needed.
             worker = StencilWorker(self.offsets,

@@ -2,10 +2,8 @@ import cPickle as pickle
 import time
 
 from mpi4py import MPI
-
-from matrix import Matrix
 from stencil import Stencil
-from functional import function, offsets
+from functional import offsets
 
 def main(matrix_file, rows=None, cols=None):
     start = time.time()

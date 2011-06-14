@@ -20,7 +20,7 @@ if __name__ == "__main__":
         sequential(sys.argv[2])
     elif sys.argv[1] == 'par':
         if len(sys.argv) == 4:
-            params = map(lambda x: int(x), sys.argv[3].split('x'))
+            params = map(int, sys.argv[3].split('x'))
         else:
             params = (None, None)
 

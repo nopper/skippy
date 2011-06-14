@@ -1,7 +1,6 @@
 import numpy
-import numpy.linalg
 
-offsets = ((-1,0), (0,-1), (0,1), (1,0))
+offsets = ((-1, 0), (0, -1), (0, 1), (1, 0))
 
 def variance(a, b):
     if isinstance(a, int):
@@ -46,7 +45,7 @@ def linsolve(a, b):
             given     = numpy.array((a[0], a[0]))
             try:
                 return numpy.linalg.solve(equations, given).mean()
-            except:
+            except Exception:
                 return 0
         return a
 

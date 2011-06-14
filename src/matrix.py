@@ -1,8 +1,7 @@
-import sys
-import random
 import itertools
 import logging
 import numpy
+import copy
 
 logging.basicConfig()
 
@@ -43,7 +42,6 @@ class Matrix(object):
             self.matrix = numpy.empty((rows, cols))
 
     def clone(self):
-        import copy
         return copy.deepcopy(self)
 
     def dump(self):
@@ -51,17 +49,17 @@ class Matrix(object):
 
     @staticmethod
     def from_string(rows, cols, contents):
-        m = Matrix(rows, cols)
-        elems = itertools.imap(lambda x: int(x),
+        mtx = Matrix(rows, cols)
+        elems = itertools.imap(int,
                                contents.replace("\n", " ").strip().split(" "))
         try:
             for i in range(rows):
                 for j in range(cols):
-                    m.matrix[i][j] = elems.next()
+                    mtx.matrix[i][j] = elems.next()
         except StopIteration:
             pass
 
-        return m
+        return mtx
 
     @staticmethod
     def from_list(rows, cols, contents):
@@ -71,25 +69,26 @@ class Matrix(object):
     def random(rows, cols):
         contents = numpy.random.randint(0, 9, (rows, cols))
         return Matrix(rows, cols, contents)
+
     def derive_partition(self, offsets, nproc):
         """
-        This method should derive a proper partition scheme starting
-        from the offsets you pass in input
+        This method should derive a proper partition scheme starting from the
+        offsets you pass in input
 
-        @param offsets model the dependencies you need in order to
-                       properly evaluate your function on the matrix.
+        @param offsets model the dependencies you need in order to properly
+                       evaluate your function on the matrix.
         @param nproc number of processors you have available
-        @return a tuple (rows, cols) that can be used to derive the
-                correct partition
+        @return a tuple (rows, cols, rw) that can be used to derive the correct
+                partition
         """
 
-        def get_min_step(x, idx):
-            if not x: return 1
-            return x[0][idx]
+        def get_min_step(lst, idx):
+            if not lst: return 1
+            return lst[0][idx]
 
-        row_dependent = sorted(filter(lambda x: x[0] != 0, offsets),
+        row_dependent = sorted([x for x in offsets if x[0] != 0],
                                key=lambda x: abs(x[0]), reverse=True)
-        col_dependent = sorted(filter(lambda x: x[1] != 0, offsets),
+        col_dependent = sorted([x for x in offsets if x[1] != 0],
                                key=lambda x: abs(x[1]), reverse=True)
 
         # Now we need to get the maximum displacement element, so we
@@ -152,8 +151,6 @@ class Matrix(object):
         if height > 0:
             height += 1
 
-        log.debug ("Height is " + str(height))
-
         # Sort row descending
         targets = extract(lambda x: x[1] > 0,
                           lambda x: x[1], True)
@@ -167,8 +164,6 @@ class Matrix(object):
 
         if width > 0:
             width += 1
-
-        log.debug ("Width is " + str(width))
 
         log.debug("Possible partition individuated %dx%d" % (height, width))
 
@@ -220,8 +215,8 @@ class Matrix(object):
         return Matrix(row_stop - row_start, col_stop - col_start,
                       self.matrix[row_start:row_stop,col_start:col_stop])
 
-    def get(self, i, j): return self.matrix[i][j]
-    def set(self, i, j, v): self.matrix[i][j] = v
+    def get(self, i, j):      return self.matrix[i][j]
+    def set(self, i, j, val): self.matrix[i][j] = val
 
 if __name__ == "__main__":
     import doctest

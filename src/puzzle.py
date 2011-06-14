@@ -3,7 +3,9 @@ import logging
 
 from numpy import zeros, vstack, hstack
 from matrix import Matrix
-from communicator.enum import *
+from communicator.enum import UP, DOWN, LEFT, RIGHT, \
+                              DOWN_LEFT, DOWN_RIGHT, \
+                              UP_LEFT, UP_RIGHT
 
 logging.basicConfig()
 
@@ -34,10 +36,15 @@ class Puzzle(object):
 
     def pad(self, part, where, dtype):
         if part is None:
-            if where == RIGHT and self.max_right > 0: return zeros((1, self.max_right))
-            if where == LEFT  and self.max_left > 0:  return zeros((1, self.max_left))
-            if where == UP    and self.max_up > 0:    return zeros((self.max_up, 1))
-            if where == DOWN  and self.max_down > 0:  return zeros((self.max_down, 1))
+            if where == RIGHT and self.max_right > 0:
+                return zeros((1, self.max_right))
+            if where == LEFT  and self.max_left > 0:
+                return zeros((1, self.max_left))
+            if where == UP    and self.max_up > 0:
+                return zeros((self.max_up, 1))
+            if where == DOWN  and self.max_down > 0:
+                return zeros((self.max_down, 1))
+
             return None
 
         if isinstance(part, Matrix): m = part.matrix

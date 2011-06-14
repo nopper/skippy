@@ -1,9 +1,6 @@
 import logging
-
 from mpi4py import MPI
-
-from enum import *
-from matrix import Matrix
+from enum import REVERSED, LABELS
 
 logging.basicConfig()
 
@@ -43,7 +40,8 @@ class Communicator(object):
             col_stop = self.parent.width
             col_start = 0
 
-        m = self.parent.partition.extract(row_start, row_stop, col_start, col_stop)
+        m = self.parent.partition.extract(row_start, row_stop, \
+                                          col_start, col_stop)
 
         log.debug("%d --> send to  : %s (direction %s)" % \
                   (rank - 1, str(remote), LABELS[direction]))
