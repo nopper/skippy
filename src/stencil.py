@@ -338,11 +338,11 @@ class Stencil(object):
 
         for i in range(matrix.rows):
             for j in range(matrix.cols):
-                val = old.get(i, j)
+                val = old.matrix[i][j]
 
                 for (x, y) in self.offsets:
                     val = function(val,
-                                   old.get((i + x) % matrix.rows,
-                                           (j + y) % matrix.cols))
+                       old.matrix[(i + x) % matrix.rows][(j + y) % matrix.cols]
+                    )
 
-                matrix.set(i, j, val)
+                matrix.matrix[i][j] = val

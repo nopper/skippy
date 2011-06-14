@@ -121,4 +121,4 @@ class Puzzle(object):
                 for (x, y) in offsets:
                     val = function(val, matrix[(i + x) % rows][(j + y) % cols])
 
-                self.center.set(i - self.max_up, j - self.max_left, val)
+                self.center.matrix[i - self.max_up][j - self.max_left] = val
