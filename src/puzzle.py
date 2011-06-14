@@ -112,7 +112,9 @@ class Puzzle(object):
         log.info("%.10f seconds to create auxiliary matrix" % \
                  (time.time() - start))
 
+        dest = self.center
         rows, cols = matrix.shape
+        idisp, jdisp = self.max_up, self.max_left
 
         for i in range(self.max_up, self.max_up + self.center.rows):
             for j in range(self.max_left, self.max_left + self.center.cols):
@@ -121,4 +123,4 @@ class Puzzle(object):
                 for (x, y) in offsets:
                     val = function(val, matrix[(i + x) % rows][(j + y) % cols])
 
-                self.center.matrix[i - self.max_up][j - self.max_left] = val
+                dest.matrix[i - idisp][j - jdisp] = val

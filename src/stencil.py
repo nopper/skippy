@@ -335,6 +335,7 @@ class Stencil(object):
 
     def seq_apply(self, matrix):
         old = matrix.clone()
+        rows, cols = matrix.rows, matrix.cols
 
         for i in range(matrix.rows):
             for j in range(matrix.cols):
@@ -342,7 +343,7 @@ class Stencil(object):
 
                 for (x, y) in self.offsets:
                     val = function(val,
-                       old.matrix[(i + x) % matrix.rows][(j + y) % matrix.cols]
+                       old.matrix[(i + x) % rows][(j + y) % cols]
                     )
 
                 matrix.matrix[i][j] = val
