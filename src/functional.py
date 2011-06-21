@@ -28,11 +28,11 @@ def linsolve(a, b):
       4
 
     5 will be our a parameter. The aim of the function is to find a solution to
-    the given algebrical system:
+    the given algebraic system:
      1x + 3y = 5
      2x + 4y = 5
 
-    Then the mean value is calculated and putted in the center.
+    Then the mean value is calculated and put in the center.
     """
     if isinstance(a, int):
         return [a, b]

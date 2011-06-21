@@ -200,7 +200,7 @@ class Stencil(object):
 
     def fix_data_deps(self, prow, pcol):
         """
-        Try to fix data dependences to avoid bogus data
+        Try to fix data dependencies to avoid bogus data
         @param prow is the number of rows each worker has assigned to
         @param pcol is the number of cols each worker has assigned to
         """
@@ -230,7 +230,7 @@ class Stencil(object):
                     else:              out = (rect[set_idx], 0)
 
                     self.data_segments[REVERSED[direction]] = out
-                    log.info("Fixing data dependences by adding %s in %s " \
+                    log.info("Fixing data dependencies by adding %s in %s " \
                              "direction" % (str(out), LABELS[direction]))
 
         adjust(UP_LEFT, DOWN_LEFT, LEFT, 0, 1)

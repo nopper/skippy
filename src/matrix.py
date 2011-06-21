@@ -10,7 +10,7 @@ log.setLevel(logging.INFO)
 
 class Matrix(object):
     """
-    The text above is considered a test case.
+    The text below is considered a test case.
 
     >>> m = Matrix.from_string(6, 5, "2 3 4 5 6 5 6 8 9 1 4 4 6 7 3 6 6 3 2 3 0 4 6 3 0 3 5 1 6 99")
     >>> row, col, proc = m.derive_partition([(0, 1), (0, 2)], 100)
