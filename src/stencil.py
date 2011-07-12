@@ -218,7 +218,7 @@ class Stencil(object):
             # If our partition to transmit is smaller than the partition size
             # assigned it means that we are loosing part of the block needed to
             # the computation.
-            if rect and abs(rect[check_idx]) < checker[check_idx]:
+            if rect and abs(rect[check_idx]) < checker[set_idx]:
                 target = self.data_segments[REVERSED[direction]]
 
                 # If it is so we have to evaluate the maximum number of items
