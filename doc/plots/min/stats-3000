@@ -1,0 +1,846 @@
+(mpi)piccinnof@axth1 src $ ~/Documents/python/env/mpi/bin/python run.py seq /tmp/matrix-3000-3000.mtx 
+Trying sequential version
+3.7601668835 seconds to load the matrix
+61.9225819111 seconds to apply sequentially
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 2 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 3000x3000
+3.8780949116 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 1 Cols: 1
+INFO:stencil:3.2127461433 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 1 axth15.cli.di.unipi.it
+INFO:puzzle:0.1911261082 seconds to create auxiliary matrix
+INFO:stencil:Worker 0: 55.5854699612 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 0: 3.1760971546 seconds to send back the partition
+INFO:stencil:58.9295430183 seconds to gather the results
+INFO:stencil:0.0000081062 seconds to reconstruct the result
+INFO:stencil:Terminated.
+62.1467659473 seconds to apply on 1 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 3 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 3000x1500
+3.8472688198 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 1 Cols: 2
+INFO:stencil:Worker started on processor 1 axth15.cli.di.unipi.it
+INFO:stencil:3.3783619404 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 2 axth27.cli.di.unipi.it
+INFO:puzzle:0.0981070995 seconds to create auxiliary matrix
+INFO:puzzle:0.1032311916 seconds to create auxiliary matrix
+INFO:stencil:Worker 0: 27.8885238171 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 1: 29.1980512142 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 0: 2.8959200382 seconds to send back the partition
+INFO:stencil:Worker 1: 3.1485359669 seconds to send back the partition
+INFO:stencil:32.5039210320 seconds to gather the results
+INFO:stencil:0.1175770760 seconds to reconstruct the result
+INFO:stencil:Terminated.
+36.0049271584 seconds to apply on 2 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 5 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 750x3000
+4.0435569286 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 4 Cols: 1
+INFO:stencil:Worker started on processor 1 axth15.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth27.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth29.cli.di.unipi.it
+INFO:puzzle:0.0557038784 seconds to create auxiliary matrix
+INFO:stencil:3.2193598747 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 4 axth34.cli.di.unipi.it
+INFO:puzzle:0.0553832054 seconds to create auxiliary matrix
+INFO:puzzle:0.0559689999 seconds to create auxiliary matrix
+INFO:puzzle:0.0707759857 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 14.5892028809 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 0: 14.1798830032 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 3: 14.5243749619 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 2: 14.6837780476 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 0: 1.2947390079 seconds to send back the partition
+INFO:stencil:Worker 1: 2.4296820164 seconds to send back the partition
+INFO:stencil:Worker 2: 2.3457150459 seconds to send back the partition
+INFO:stencil:Worker 3: 3.2830631733 seconds to send back the partition
+INFO:stencil:17.9332609177 seconds to gather the results
+INFO:stencil:0.0821270943 seconds to reconstruct the result
+INFO:stencil:Terminated.
+21.2399849892 seconds to apply on 4 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 6 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 600x3000
+The authenticity of host 'axth17.cli.di.unipi.it (131.114.11.117)' can't be established.
+RSA key fingerprint is 17:bf:9d:f8:fa:ca:53:70:c4:2f:12:e9:71:22:b1:95.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'axth17.cli.di.unipi.it' (RSA) to the list of known hosts.
+3.8473248482 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 5 Cols: 1
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:puzzle:0.0494849682 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:puzzle:0.0396850109 seconds to create auxiliary matrix
+INFO:stencil:3.2186541557 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0366919041 seconds to create auxiliary matrix
+INFO:puzzle:0.0416500568 seconds to create auxiliary matrix
+INFO:puzzle:0.0483520031 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 11.3296818733 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 2: 11.2318439484 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 3: 11.2399711609 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 0: 11.2493770123 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 4: 11.6217758656 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 0: 1.0027110577 seconds to send back the partition
+INFO:stencil:Worker 1: 2.7757439613 seconds to send back the partition
+INFO:stencil:Worker 2: 2.8809709549 seconds to send back the partition
+INFO:stencil:Worker 3: 2.8777379990 seconds to send back the partition
+INFO:stencil:Worker 4: 3.1196398735 seconds to send back the partition
+INFO:stencil:14.8621578217 seconds to gather the results
+INFO:stencil:0.1029758453 seconds to reconstruct the result
+INFO:stencil:Terminated.
+18.1891689301 seconds to apply on 5 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 7 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 500x3000
+3.8551239967 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 6 Cols: 1
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:puzzle:0.0340521336 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:puzzle:0.0404570103 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0417649746 seconds to create auxiliary matrix
+INFO:stencil:3.2191331387 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:puzzle:0.0347309113 seconds to create auxiliary matrix
+INFO:puzzle:0.0392119884 seconds to create auxiliary matrix
+INFO:puzzle:0.0477271080 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 9.4236180782 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 2: 9.4110891819 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 3: 9.4910759926 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 0: 9.4097421169 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 4: 9.7168159485 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 5: 9.8233740330 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 0: 0.9395430088 seconds to send back the partition
+INFO:stencil:Worker 1: 2.9853870869 seconds to send back the partition
+INFO:stencil:Worker 2: 3.0017900467 seconds to send back the partition
+INFO:stencil:Worker 3: 2.9353351593 seconds to send back the partition
+INFO:stencil:Worker 4: 2.7130539417 seconds to send back the partition
+INFO:stencil:Worker 5: 3.1257579327 seconds to send back the partition
+INFO:stencil:13.0624511242 seconds to gather the results
+INFO:stencil:0.1223440170 seconds to reconstruct the result
+INFO:stencil:Terminated.
+16.4093370438 seconds to apply on 6 processors
+
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 9 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 375x3000
+3.8192241192 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 8 Cols: 1
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:puzzle:0.0289909840 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:puzzle:0.0291788578 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0294680595 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:puzzle:0.0300559998 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 7 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 8 axth1.cli.di.unipi.it
+INFO:stencil:2.8589618206 seconds to scatter the matrix
+INFO:puzzle:0.0337500572 seconds to create auxiliary matrix
+INFO:puzzle:0.0296368599 seconds to create auxiliary matrix
+INFO:puzzle:0.0288281441 seconds to create auxiliary matrix
+INFO:puzzle:0.0336990356 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 7.1608622074 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 2: 7.0929501057 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 3: 7.2074649334 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 0: 7.0307021141 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 4: 7.4855880737 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 7: 7.1039319038 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 8
+INFO:stencil:Worker 6: 7.4264459610 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 7
+INFO:stencil:Worker 5: 7.4475300312 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 0: 0.8036379814 seconds to send back the partition
+INFO:stencil:Worker 1: 2.6108689308 seconds to send back the partition
+INFO:stencil:Worker 2: 2.6833651066 seconds to send back the partition
+INFO:stencil:Worker 3: 2.5722401142 seconds to send back the partition
+INFO:stencil:Worker 4: 2.2989399433 seconds to send back the partition
+INFO:stencil:Worker 5: 2.3391361237 seconds to send back the partition
+INFO:stencil:Worker 6: 2.7412660122 seconds to send back the partition
+INFO:stencil:Worker 7: 3.0829291344 seconds to send back the partition
+INFO:stencil:10.2760779858 seconds to gather the results
+INFO:stencil:0.1612138748 seconds to reconstruct the result
+INFO:stencil:Terminated.
+13.3123631477 seconds to apply on 8 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 11 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 300x3000
+3.8153519630 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 10 Cols: 1
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:puzzle:0.0217669010 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:puzzle:0.0219810009 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0219888687 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:puzzle:0.0184030533 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 7 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 8 axth1.cli.di.unipi.it
+INFO:puzzle:0.0249288082 seconds to create auxiliary matrix
+INFO:puzzle:0.0247788429 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 9 axth3.cli.di.unipi.it
+INFO:puzzle:0.0237100124 seconds to create auxiliary matrix
+INFO:stencil:2.9396069050 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 10 axth7.cli.di.unipi.it
+INFO:puzzle:0.0177690983 seconds to create auxiliary matrix
+INFO:puzzle:0.0272409916 seconds to create auxiliary matrix
+INFO:puzzle:0.0429689884 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 5.7610480785 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 2: 5.7018899918 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 3: 5.7128558159 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 4: 6.0202550888 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 6: 5.8900489807 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 7
+INFO:stencil:Worker 5: 6.0073058605 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 7: 5.6866171360 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 8
+INFO:stencil:Worker 9: 5.7026548386 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 10
+INFO:stencil:Worker 0: 5.7503650188 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 8: 5.7521359921 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 9
+INFO:stencil:Worker 0: 0.3303039074 seconds to send back the partition
+INFO:stencil:Worker 1: 2.4970490932 seconds to send back the partition
+INFO:stencil:Worker 2: 2.5600080490 seconds to send back the partition
+INFO:stencil:Worker 3: 2.6007249355 seconds to send back the partition
+INFO:stencil:Worker 4: 2.2928831577 seconds to send back the partition
+INFO:stencil:Worker 5: 2.3106768131 seconds to send back the partition
+INFO:stencil:Worker 6: 2.7290859222 seconds to send back the partition
+INFO:stencil:Worker 7: 2.6339540482 seconds to send back the partition
+INFO:stencil:Worker 8: 2.5735459328 seconds to send back the partition
+INFO:stencil:Worker 9: 2.9360809326 seconds to send back the partition
+INFO:stencil:8.7363240719 seconds to gather the results
+INFO:stencil:0.1978850365 seconds to reconstruct the result
+INFO:stencil:Terminated.
+11.8900120258 seconds to apply on 10 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 13 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 250x3000
+3.8239758015 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 12 Cols: 1
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:puzzle:0.0174980164 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:puzzle:0.0173070431 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0174419880 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:puzzle:0.0190010071 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 7 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 8 axth1.cli.di.unipi.it
+INFO:puzzle:0.0193510056 seconds to create auxiliary matrix
+INFO:puzzle:0.0193052292 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 9 axth3.cli.di.unipi.it
+INFO:puzzle:0.0176970959 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 10 axth7.cli.di.unipi.it
+INFO:puzzle:0.0171611309 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 11 axth15.cli.di.unipi.it
+INFO:puzzle:0.0140268803 seconds to create auxiliary matrix
+INFO:stencil:2.9862549305 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 12 axth17.cli.di.unipi.it
+INFO:puzzle:0.0147020817 seconds to create auxiliary matrix
+INFO:puzzle:0.0139310360 seconds to create auxiliary matrix
+INFO:puzzle:0.0139360428 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 4.8846290112 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 2: 4.7775418758 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 3: 4.8598868847 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 4: 4.9381990433 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 5: 4.9876239300 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 6: 5.0000250340 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 7
+INFO:stencil:Worker 7: 4.8899929523 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 8
+INFO:stencil:Worker 8: 4.7513248920 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 9
+INFO:stencil:Worker 9: 4.7658970356 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 10
+INFO:stencil:Worker 0: 4.7146208286 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 10: 4.7262599468 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 11
+INFO:stencil:Worker 11: 4.8598740101 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 12
+INFO:stencil:Worker 0: 0.4066009521 seconds to send back the partition
+INFO:stencil:Worker 1: 2.5680549145 seconds to send back the partition
+INFO:stencil:Worker 2: 2.6786639690 seconds to send back the partition
+INFO:stencil:Worker 3: 2.5998470783 seconds to send back the partition
+INFO:stencil:Worker 4: 2.5249528885 seconds to send back the partition
+INFO:stencil:Worker 5: 2.4799649715 seconds to send back the partition
+INFO:stencil:Worker 6: 2.7178788185 seconds to send back the partition
+INFO:stencil:Worker 7: 2.5829927921 seconds to send back the partition
+INFO:stencil:Worker 8: 2.7137160301 seconds to send back the partition
+INFO:stencil:Worker 9: 2.7031807899 seconds to send back the partition
+INFO:stencil:Worker 10: 2.7464058399 seconds to send back the partition
+INFO:stencil:Worker 11: 2.8890249729 seconds to send back the partition
+INFO:stencil:7.8508770466 seconds to gather the results
+INFO:stencil:0.2355160713 seconds to reconstruct the result
+INFO:stencil:Terminated.
+11.0889959335 seconds to apply on 12 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 16 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 200x3000
+4.2416129112 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 15 Cols: 1
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:puzzle:0.0133230686 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:puzzle:0.0133960247 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0125260353 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:puzzle:0.0149431229 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 8 axth1.cli.di.unipi.it
+INFO:stencil:Worker started on processor 7 axth34.cli.di.unipi.it
+INFO:puzzle:0.0151369572 seconds to create auxiliary matrix
+INFO:puzzle:0.0150020123 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 9 axth3.cli.di.unipi.it
+INFO:puzzle:0.0137419701 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 10 axth7.cli.di.unipi.it
+INFO:puzzle:0.0133869648 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 11 axth15.cli.di.unipi.it
+INFO:puzzle:0.0107669830 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 12 axth17.cli.di.unipi.it
+INFO:puzzle:0.0107409954 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 13 axth27.cli.di.unipi.it
+INFO:puzzle:0.0269739628 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 14 axth29.cli.di.unipi.it
+INFO:puzzle:0.0100629330 seconds to create auxiliary matrix
+INFO:stencil:3.0550968647 seconds to scatter the matrix
+INFO:puzzle:0.0103640556 seconds to create auxiliary matrix
+INFO:puzzle:0.0108458996 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 15 axth34.cli.di.unipi.it
+INFO:puzzle:0.0103158951 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 3.9157958031 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 2: 3.8905608654 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 3: 3.9742760658 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 4: 3.9994750023 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 6: 3.9730138779 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 7
+INFO:stencil:Worker 5: 4.0327010155 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 7: 3.9427888393 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 8
+INFO:stencil:Worker 8: 3.8679668903 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 9
+INFO:stencil:Worker 10: 3.8129689693 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 11
+INFO:stencil:Worker 9: 4.0437729359 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 10
+INFO:stencil:Worker 11: 3.9887101650 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 12
+INFO:stencil:Worker 12: 3.9315929413 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 13
+INFO:stencil:Worker 0: 3.8327100277 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 14: 3.9994270802 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 15
+INFO:stencil:Worker 13: 4.0158550739 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 14
+INFO:stencil:Worker 0: 0.3924288750 seconds to send back the partition
+INFO:stencil:Worker 1: 2.8136680126 seconds to send back the partition
+INFO:stencil:Worker 2: 2.8358380795 seconds to send back the partition
+INFO:stencil:Worker 3: 2.7545239925 seconds to send back the partition
+INFO:stencil:Worker 4: 2.7328798771 seconds to send back the partition
+INFO:stencil:Worker 5: 2.7028880119 seconds to send back the partition
+INFO:stencil:Worker 6: 2.9671130180 seconds to send back the partition
+INFO:stencil:Worker 7: 2.7957019806 seconds to send back the partition
+INFO:stencil:Worker 8: 2.8633949757 seconds to send back the partition
+INFO:stencil:Worker 9: 2.6753718853 seconds to send back the partition
+INFO:stencil:Worker 10: 2.9112789631 seconds to send back the partition
+INFO:stencil:Worker 11: 2.7397198677 seconds to send back the partition
+INFO:stencil:Worker 12: 2.8003659248 seconds to send back the partition
+INFO:stencil:Worker 13: 2.7199540138 seconds to send back the partition
+INFO:stencil:Worker 14: 2.9450130463 seconds to send back the partition
+INFO:stencil:7.0312490463 seconds to gather the results
+INFO:stencil:0.2906820774 seconds to reconstruct the result
+INFO:stencil:Terminated.
+10.3934650421 seconds to apply on 15 processors
+
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 17 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 375x1500
+3.8200960159 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 8 Cols: 2
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0287120342 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:puzzle:0.0232100487 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 7 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 8 axth1.cli.di.unipi.it
+INFO:puzzle:0.0265140533 seconds to create auxiliary matrix
+INFO:puzzle:0.0267069340 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 9 axth3.cli.di.unipi.it
+INFO:puzzle:0.0266530514 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 10 axth7.cli.di.unipi.it
+INFO:puzzle:0.0307340622 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 11 axth15.cli.di.unipi.it
+INFO:puzzle:0.0229001045 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 12 axth17.cli.di.unipi.it
+INFO:puzzle:0.0227038860 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 13 axth27.cli.di.unipi.it
+INFO:puzzle:0.0181999207 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 14 axth29.cli.di.unipi.it
+INFO:puzzle:0.0188701153 seconds to create auxiliary matrix
+INFO:stencil:2.9907858372 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 15 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 16 axth1.cli.di.unipi.it
+INFO:puzzle:0.0182027817 seconds to create auxiliary matrix
+INFO:puzzle:0.0173070431 seconds to create auxiliary matrix
+INFO:puzzle:0.0173120499 seconds to create auxiliary matrix
+INFO:puzzle:0.0176029205 seconds to create auxiliary matrix
+INFO:puzzle:0.0189039707 seconds to create auxiliary matrix
+INFO:puzzle:0.0182991028 seconds to create auxiliary matrix
+INFO:stencil:Worker 2: 3.6889541149 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 4: 3.8146708012 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 5: 3.8168230057 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 3: 4.1129260063 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 6: 3.8991701603 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 7
+INFO:stencil:Worker 7: 3.7443871498 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 8
+INFO:stencil:Worker 8: 3.6787061691 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 9
+INFO:stencil:Worker 9: 3.6570789814 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 10
+INFO:stencil:Worker 10: 3.6342868805 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 11
+INFO:stencil:Worker 0: 3.6305840015 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 1: 3.6373078823 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 15: 3.6521310806 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 16
+INFO:stencil:Worker 13: 3.7716350555 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 14
+INFO:stencil:Worker 12: 3.8085708618 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 13
+INFO:stencil:Worker 14: 3.8308100700 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 15
+INFO:stencil:Worker 11: 4.4172511101 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 12
+INFO:stencil:Worker 0: 0.7968330383 seconds to send back the partition
+INFO:stencil:Worker 1: 0.9810400009 seconds to send back the partition
+INFO:stencil:Worker 2: 2.8637139797 seconds to send back the partition
+INFO:stencil:Worker 3: 2.4430620670 seconds to send back the partition
+INFO:stencil:Worker 4: 2.7325038910 seconds to send back the partition
+INFO:stencil:Worker 5: 2.9209640026 seconds to send back the partition
+INFO:stencil:Worker 6: 2.8458390236 seconds to send back the partition
+INFO:stencil:Worker 7: 2.8180859089 seconds to send back the partition
+INFO:stencil:Worker 8: 2.8877148628 seconds to send back the partition
+INFO:stencil:Worker 9: 2.9041588306 seconds to send back the partition
+INFO:stencil:Worker 10: 2.9365341663 seconds to send back the partition
+INFO:stencil:Worker 11: 2.1564831734 seconds to send back the partition
+INFO:stencil:Worker 12: 2.7674179077 seconds to send back the partition
+INFO:stencil:Worker 13: 2.9946970940 seconds to send back the partition
+INFO:stencil:Worker 14: 3.1303679943 seconds to send back the partition
+INFO:stencil:Worker 15: 3.3198008537 seconds to send back the partition
+INFO:stencil:7.0644078255 seconds to gather the results
+INFO:stencil:0.3418531418 seconds to reconstruct the result
+INFO:stencil:Terminated.
+10.4277060032 seconds to apply on 16 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 19 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 500x1000
+3.8085110188 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 6 Cols: 3
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:stencil:Worker started on processor 7 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 8 axth1.cli.di.unipi.it
+INFO:puzzle:0.0152459145 seconds to create auxiliary matrix
+INFO:puzzle:0.0218770504 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 9 axth3.cli.di.unipi.it
+INFO:puzzle:0.0174388885 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 10 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 11 axth15.cli.di.unipi.it
+INFO:puzzle:0.0198628902 seconds to create auxiliary matrix
+INFO:puzzle:0.0315918922 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 12 axth17.cli.di.unipi.it
+INFO:puzzle:0.0189189911 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 13 axth27.cli.di.unipi.it
+INFO:puzzle:0.0192940235 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 14 axth29.cli.di.unipi.it
+INFO:puzzle:0.0192091465 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 15 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 16 axth1.cli.di.unipi.it
+INFO:puzzle:0.0156898499 seconds to create auxiliary matrix
+INFO:puzzle:0.0138921738 seconds to create auxiliary matrix
+INFO:puzzle:0.0151340961 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 17 axth3.cli.di.unipi.it
+INFO:puzzle:0.0140640736 seconds to create auxiliary matrix
+INFO:puzzle:0.0153961182 seconds to create auxiliary matrix
+INFO:stencil:3.1277430058 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 18 axth7.cli.di.unipi.it
+INFO:puzzle:0.0150649548 seconds to create auxiliary matrix
+INFO:puzzle:0.0149140358 seconds to create auxiliary matrix
+INFO:puzzle:0.0151901245 seconds to create auxiliary matrix
+INFO:puzzle:0.0140688419 seconds to create auxiliary matrix
+INFO:puzzle:0.0150771141 seconds to create auxiliary matrix
+INFO:stencil:Worker 4: 3.4589769840 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 3: 3.5807340145 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 5: 3.4636890888 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 7: 3.3024859428 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 8
+INFO:stencil:Worker 6: 3.4155108929 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 7
+INFO:stencil:Worker 10: 3.2624750137 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 11
+INFO:stencil:Worker 11: 3.3019549847 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 12
+INFO:stencil:Worker 12: 3.3735949993 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 13
+INFO:stencil:Worker 13: 3.3790729046 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 14
+INFO:stencil:Worker 15: 3.2268788815 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 16
+INFO:stencil:Worker 2: 3.2417700291 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 8: 4.2032999992 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 9
+INFO:stencil:Worker 14: 3.3846609592 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 15
+INFO:stencil:Worker 9: 4.1633079052 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 10
+INFO:stencil:Worker 0: 4.4403679371 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 1: 4.4802830219 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 16: 4.3977200985 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 17
+INFO:stencil:Worker 17: 4.4673359394 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 18
+INFO:stencil:Worker 0: 0.5631639957 seconds to send back the partition
+INFO:stencil:Worker 1: 0.5136620998 seconds to send back the partition
+INFO:stencil:Worker 2: 1.7455730438 seconds to send back the partition
+INFO:stencil:Worker 3: 3.2078399658 seconds to send back the partition
+INFO:stencil:Worker 4: 3.5013039112 seconds to send back the partition
+INFO:stencil:Worker 5: 3.4965751171 seconds to send back the partition
+INFO:stencil:Worker 6: 3.3439462185 seconds to send back the partition
+INFO:stencil:Worker 7: 3.4958860874 seconds to send back the partition
+INFO:stencil:Worker 8: 2.5347959995 seconds to send back the partition
+INFO:stencil:Worker 9: 2.5564379692 seconds to send back the partition
+INFO:stencil:Worker 10: 3.4803681374 seconds to send back the partition
+INFO:stencil:Worker 11: 3.4432260990 seconds to send back the partition
+INFO:stencil:Worker 12: 3.5405240059 seconds to send back the partition
+INFO:stencil:Worker 13: 3.5256159306 seconds to send back the partition
+INFO:stencil:Worker 14: 3.5120480061 seconds to send back the partition
+INFO:stencil:Worker 15: 3.6804108620 seconds to send back the partition
+INFO:stencil:Worker 16: 2.6806750298 seconds to send back the partition
+INFO:stencil:Worker 17: 2.7844550610 seconds to send back the partition
+INFO:stencil:7.3420269489 seconds to gather the results
+INFO:stencil:0.3319509029 seconds to reconstruct the result
+INFO:stencil:Terminated.
+10.8230249882 seconds to apply on 18 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 21 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 150x3000
+3.8138000965 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 20 Cols: 1
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:puzzle:0.0096371174 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:puzzle:0.0097000599 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0096900463 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:puzzle:0.0110070705 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 8 axth1.cli.di.unipi.it
+INFO:stencil:Worker started on processor 7 axth34.cli.di.unipi.it
+INFO:puzzle:0.0110561848 seconds to create auxiliary matrix
+INFO:puzzle:0.0110518932 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 9 axth3.cli.di.unipi.it
+INFO:puzzle:0.0095541477 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 10 axth7.cli.di.unipi.it
+INFO:puzzle:0.0094509125 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 11 axth15.cli.di.unipi.it
+INFO:puzzle:0.0074291229 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 12 axth17.cli.di.unipi.it
+INFO:puzzle:0.0073900223 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 13 axth27.cli.di.unipi.it
+INFO:puzzle:0.0076251030 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 14 axth29.cli.di.unipi.it
+INFO:puzzle:0.0073750019 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 15 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 16 axth1.cli.di.unipi.it
+INFO:puzzle:0.0074529648 seconds to create auxiliary matrix
+INFO:puzzle:0.0074200630 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 17 axth3.cli.di.unipi.it
+INFO:puzzle:0.0075008869 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 18 axth7.cli.di.unipi.it
+INFO:puzzle:0.0073709488 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 19 axth15.cli.di.unipi.it
+INFO:puzzle:0.0075919628 seconds to create auxiliary matrix
+INFO:stencil:2.9632349014 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 20 axth17.cli.di.unipi.it
+INFO:puzzle:0.0076000690 seconds to create auxiliary matrix
+INFO:puzzle:0.0075440407 seconds to create auxiliary matrix
+INFO:puzzle:0.0102779865 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 3.2733190060 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 2: 3.1652090549 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 4: 3.1159880161 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 5: 3.0212111473 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 6: 3.0500988960 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 7
+INFO:stencil:Worker 3: 3.4222931862 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 7: 3.0242819786 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 8
+INFO:stencil:Worker 9: 3.1303391457 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 10
+INFO:stencil:Worker 8: 3.3396980762 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 9
+INFO:stencil:Worker 12: 2.9665548801 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 13
+INFO:stencil:Worker 10: 3.3381531239 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 11
+INFO:stencil:Worker 14: 2.9531240463 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 15
+INFO:stencil:Worker 13: 2.9794991016 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 14
+INFO:stencil:Worker 15: 2.8293359280 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 16
+INFO:stencil:Worker 11: 3.9480168819 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 12
+INFO:stencil:Worker 17: 3.3099498749 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 18
+INFO:stencil:Worker 18: 3.1713900566 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 19
+INFO:stencil:Worker 16: 3.6222071648 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 17
+INFO:stencil:Worker 0: 3.6571140289 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 19: 3.8008229733 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 20
+INFO:stencil:Worker 0: 0.2986240387 seconds to send back the partition
+INFO:stencil:Worker 1: 3.2045090199 seconds to send back the partition
+INFO:stencil:Worker 2: 3.2919828892 seconds to send back the partition
+INFO:stencil:Worker 3: 3.0349349976 seconds to send back the partition
+INFO:stencil:Worker 4: 3.3428730965 seconds to send back the partition
+INFO:stencil:Worker 5: 3.4381961823 seconds to send back the partition
+INFO:stencil:Worker 6: 3.5534760952 seconds to send back the partition
+INFO:stencil:Worker 7: 3.4387080669 seconds to send back the partition
+INFO:stencil:Worker 8: 3.1159620285 seconds to send back the partition
+INFO:stencil:Worker 9: 3.3277540207 seconds to send back the partition
+INFO:stencil:Worker 10: 3.1221790314 seconds to send back the partition
+INFO:stencil:Worker 11: 2.5157639980 seconds to send back the partition
+INFO:stencil:Worker 12: 3.4985418320 seconds to send back the partition
+INFO:stencil:Worker 13: 3.4884479046 seconds to send back the partition
+INFO:stencil:Worker 14: 3.6669268608 seconds to send back the partition
+INFO:stencil:Worker 15: 3.6421449184 seconds to send back the partition
+INFO:stencil:Worker 16: 2.8432149887 seconds to send back the partition
+INFO:stencil:Worker 17: 3.1576831341 seconds to send back the partition
+INFO:stencil:Worker 18: 3.2961950302 seconds to send back the partition
+INFO:stencil:Worker 19: 2.8239810467 seconds to send back the partition
+INFO:stencil:6.7200300694 seconds to gather the results
+INFO:stencil:0.3840830326 seconds to reconstruct the result
+INFO:stencil:Terminated.
+10.0883309841 seconds to apply on 20 processors
+
+(mpi)piccinnof@axth1 src $ mpirun -machinefile multicores -np 25 ~/Documents/python/env/mpi/bin/python2.5-mpi run.py par /tmp/matrix-3000-3000.mtx 125x3000
+3.8145320415 seconds to load the matrix
+INFO:stencil:Skipping auto-derivation
+INFO:stencil:After partition => Rows: 24 Cols: 1
+INFO:stencil:Worker started on processor 1 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 2 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 3 axth15.cli.di.unipi.it
+INFO:puzzle:0.0076959133 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 4 axth17.cli.di.unipi.it
+INFO:puzzle:0.0077979565 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 5 axth27.cli.di.unipi.it
+INFO:puzzle:0.0076589584 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 6 axth29.cli.di.unipi.it
+INFO:puzzle:0.0090520382 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 8 axth1.cli.di.unipi.it
+INFO:stencil:Worker started on processor 7 axth34.cli.di.unipi.it
+INFO:puzzle:0.0092539787 seconds to create auxiliary matrix
+INFO:puzzle:0.0093050003 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 9 axth3.cli.di.unipi.it
+INFO:stencil:Worker started on processor 10 axth7.cli.di.unipi.it
+INFO:stencil:Worker started on processor 11 axth15.cli.di.unipi.it
+INFO:puzzle:0.0077190399 seconds to create auxiliary matrix
+INFO:puzzle:0.0080399513 seconds to create auxiliary matrix
+INFO:puzzle:0.0058660507 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 12 axth17.cli.di.unipi.it
+INFO:puzzle:0.0063760281 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 13 axth27.cli.di.unipi.it
+INFO:puzzle:0.0058059692 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 14 axth29.cli.di.unipi.it
+INFO:puzzle:0.0060729980 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 16 axth1.cli.di.unipi.it
+INFO:stencil:Worker started on processor 15 axth34.cli.di.unipi.it
+INFO:puzzle:0.0062510967 seconds to create auxiliary matrix
+INFO:puzzle:0.0061519146 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 17 axth3.cli.di.unipi.it
+INFO:puzzle:0.0059571266 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 18 axth7.cli.di.unipi.it
+INFO:puzzle:0.0056371689 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 19 axth15.cli.di.unipi.it
+INFO:puzzle:0.0059440136 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 20 axth17.cli.di.unipi.it
+INFO:puzzle:0.0060498714 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 21 axth27.cli.di.unipi.it
+INFO:puzzle:0.0058228970 seconds to create auxiliary matrix
+INFO:stencil:Worker started on processor 22 axth29.cli.di.unipi.it
+INFO:puzzle:0.0060169697 seconds to create auxiliary matrix
+INFO:stencil:3.0777299404 seconds to scatter the matrix
+INFO:stencil:Worker started on processor 23 axth34.cli.di.unipi.it
+INFO:stencil:Worker started on processor 24 axth1.cli.di.unipi.it
+INFO:puzzle:0.0062079430 seconds to create auxiliary matrix
+INFO:puzzle:0.0063550472 seconds to create auxiliary matrix
+INFO:puzzle:0.0058138371 seconds to create auxiliary matrix
+INFO:puzzle:0.0061180592 seconds to create auxiliary matrix
+INFO:stencil:Worker 1: 2.7626199722 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 2
+INFO:stencil:Worker 2: 2.7464239597 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 3
+INFO:stencil:Worker 4: 2.9397928715 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 5
+INFO:stencil:Worker 3: 3.1855700016 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 4
+INFO:stencil:Worker 6: 2.9603118896 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 7
+INFO:stencil:Worker 5: 3.0491409302 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 6
+INFO:stencil:Worker 9: 2.6052350998 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 10
+INFO:stencil:Worker 8: 2.8933100700 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 9
+INFO:stencil:Worker 10: 2.7662079334 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 11
+INFO:stencil:Worker 7: 2.9981639385 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 8
+INFO:stencil:Worker 11: 2.7296400070 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 12
+INFO:stencil:Worker 13: 2.5879380703 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 14
+INFO:stencil:Worker 12: 2.8199629784 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 13
+INFO:stencil:Worker 14: 2.8014268875 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 15
+INFO:stencil:Worker 15: 2.8044769764 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 16
+INFO:stencil:Worker 16: 2.8532068729 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 17
+INFO:stencil:Worker 17: 2.6671459675 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 18
+INFO:stencil:Worker 18: 2.7497661114 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 19
+INFO:stencil:Worker 20: 2.7571330070 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 21
+INFO:stencil:Worker 19: 2.9594719410 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 20
+INFO:stencil:Worker 22: 2.8160469532 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 23
+INFO:stencil:Worker 0: 2.8527390957 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 1
+INFO:stencil:Worker 21: 2.9767768383 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 22
+INFO:stencil:Worker 23: 2.9872210026 seconds to compute the partition
+INFO:stencil:Sending back the computed sub-partition from 24
+INFO:stencil:Worker 0: 0.2626178265 seconds to send back the partition
+INFO:stencil:Worker 1: 2.9881029129 seconds to send back the partition
+INFO:stencil:Worker 2: 2.9865679741 seconds to send back the partition
+INFO:stencil:Worker 3: 2.5687248707 seconds to send back the partition
+INFO:stencil:Worker 4: 2.8161969185 seconds to send back the partition
+INFO:stencil:Worker 5: 2.7089500427 seconds to send back the partition
+INFO:stencil:Worker 7: 2.4436900616 seconds to send back the partition
+INFO:stencil:Worker 6: 2.8979179859 seconds to send back the partition
+INFO:stencil:Worker 8: 2.6761331558 seconds to send back the partition
+INFO:stencil:Worker 9: 3.0917320251 seconds to send back the partition
+INFO:stencil:Worker 10: 2.9071350098 seconds to send back the partition
+INFO:stencil:Worker 11: 2.9474148750 seconds to send back the partition
+INFO:stencil:Worker 12: 2.8579549789 seconds to send back the partition
+INFO:stencil:Worker 13: 3.1795148849 seconds to send back the partition
+INFO:stencil:Worker 14: 3.0878970623 seconds to send back the partition
+INFO:stencil:Worker 15: 2.9636299610 seconds to send back the partition
+INFO:stencil:Worker 16: 2.9090018272 seconds to send back the partition
+INFO:stencil:Worker 17: 2.9305779934 seconds to send back the partition
+INFO:stencil:Worker 18: 2.8544628620 seconds to send back the partition
+INFO:stencil:Worker 19: 2.6471099854 seconds to send back the partition
+INFO:stencil:Worker 20: 2.8509349823 seconds to send back the partition
+INFO:stencil:Worker 21: 2.6339919567 seconds to send back the partition
+INFO:stencil:Worker 22: 2.9212610722 seconds to send back the partition
+INFO:stencil:Worker 23: 2.7593250275 seconds to send back the partition
+INFO:stencil:5.8414070606 seconds to gather the results
+INFO:stencil:0.4575178623 seconds to reconstruct the result
+INFO:stencil:Terminated.
+9.4131009579 seconds to apply on 24 processors
+

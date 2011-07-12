@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   viewBox="0.0 0.0 720.0 540.0"
+   fill="none"
+   stroke="none"
+   stroke-linecap="square"
+   stroke-miterlimit="10"
+   clip-path="url(#clip0)"
+   id="svg3256"
+   inkscape:version="0.48.1 r9760"
+   width="100%"
+   height="100%"
+   sodipodi:docname="imgs.svg">
+  <metadata
+     id="metadata3283">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3281">
+    <filter
+       id="filter3434"
+       inkscape:label="Drop shadow"
+       width="1.5"
+       height="1.5"
+       x="-.25"
+       y="-.25">
+      <feGaussianBlur
+         id="feGaussianBlur3436"
+         in="SourceAlpha"
+         stdDeviation="2"
+         result="blur" />
+      <feColorMatrix
+         id="feColorMatrix3438"
+         result="bluralpha"
+         type="matrix"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.5 0 " />
+      <feOffset
+         id="feOffset3440"
+         in="bluralpha"
+         dx="4"
+         dy="4"
+         result="offsetBlur" />
+      <feMerge
+         id="feMerge3442">
+        <feMergeNode
+           id="feMergeNode3444"
+           in="offsetBlur" />
+        <feMergeNode
+           id="feMergeNode3446"
+           in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1024"
+     inkscape:window-height="551"
+     id="namedview3279"
+     showgrid="false"
+     inkscape:zoom="1.5032566"
+     inkscape:cx="167.12398"
+     inkscape:cy="440.94827"
+     inkscape:window-x="0"
+     inkscape:window-y="26"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3256" />
+  <clipPath
+     id="clip0">
+    <path
+       d="M0 0L720.0 0L720.0 540.0L0 540.0L0 0Z"
+       clip-rule="nonzero"
+       id="path3259" />
+  </clipPath>
+  <g
+     id="g3417"
+     style="filter:url(#filter3434)"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-row.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90">
+    <g
+       id="g3400">
+      <path
+         d="m 311,45.000004 96.37794,0 0,31.999996 L 311,77 z"
+         id="path3261"
+         inkscape:connector-curvature="0"
+         style="fill:#fce5cd;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round" />
+      <path
+         d="m 311,81 96.37797,0 0,32 L 311,113 z"
+         id="path3263"
+         inkscape:connector-curvature="0"
+         style="fill:#d9ead3;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round" />
+      <path
+         d="m 311,116.99999 96.37796,0 0,32.00001 L 311,149 z"
+         id="path3265"
+         inkscape:connector-curvature="0"
+         style="fill:#fce5cd;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round" />
+      <path
+         d="m 342.84821,118.8837 0,30.26809"
+         id="path3277-8"
+         inkscape:connector-curvature="0"
+         style="stroke:#073763;stroke-width:1.69641304;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:6.78565384, 5.08924036" />
+      <path
+         d="m 342.84821,82.883707 0,30.268083"
+         id="path3277-4"
+         inkscape:connector-curvature="0"
+         style="stroke:#073763;stroke-width:1.69641304;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:6.78565384, 5.08924036" />
+      <path
+         d="m 342.84821,46.883707 0,30.268086"
+         id="path3277-4-0"
+         inkscape:connector-curvature="0"
+         style="stroke:#073763;stroke-width:1.69641304;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:6.78565384, 5.08924036" />
+      <path
+         d="m 374.84821,118.8837 0,30.26809"
+         id="path3277-8-4"
+         inkscape:connector-curvature="0"
+         style="stroke:#073763;stroke-width:1.69641304;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:6.78565384, 5.08924036" />
+      <path
+         d="m 374.84821,82.883707 0,30.268083"
+         id="path3277-8-4-6"
+         inkscape:connector-curvature="0"
+         style="stroke:#073763;stroke-width:1.69641304;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:6.78565384, 5.08924036" />
+      <path
+         d="m 374.84821,46.883709 0,30.268084"
+         id="path3277-8-4-6-2"
+         inkscape:connector-curvature="0"
+         style="stroke:#073763;stroke-width:1.69641304;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:6.78565384, 5.08924036" />
+    </g>
+    <g
+       transform="translate(-0.811015,0)"
+       id="g3411">
+      <path
+         d="m 360,86 0,-12"
+         id="path3267"
+         inkscape:connector-curvature="0"
+         style="stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round" />
+      <path
+         d="M 363.30347,74 360,64.923805 356.69653,74 z"
+         id="path3269"
+         inkscape:connector-curvature="0"
+         style="fill:#073763;fill-rule:evenodd;stroke:#073763;stroke-width:2;stroke-linecap:butt" />
+      <path
+         d="m 360,108 0,12"
+         id="path3271"
+         inkscape:connector-curvature="0"
+         style="stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round" />
+      <path
+         d="M 356.69653,120 360,129.0762 363.30347,120 z"
+         id="path3273"
+         inkscape:connector-curvature="0"
+         style="fill:#073763;fill-rule:evenodd;stroke:#073763;stroke-width:2;stroke-linecap:butt" />
+    </g>
+  </g>
+  <path
+     d="m 83.040149,42.300991 32.000001,0 0,31.999997 -32.000001,0 z"
+     id="path7"
+     inkscape:connector-curvature="0"
+     style="fill:#cfe2f3;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 119.04015,42.300987 32,0 0,32.000001 -32,0 z"
+     id="path9"
+     inkscape:connector-curvature="0"
+     style="fill:#fce5cd;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 155.04015,42.300987 32,0 0,32.000001 -32,0 z"
+     id="path11"
+     inkscape:connector-curvature="0"
+     style="fill:#cfe2f3;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 83.069839,78.300988 32.000001,0 0,32.000002 -32.000001,0 z"
+     id="path13"
+     inkscape:connector-curvature="0"
+     style="fill:#fce5cd;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 155.04015,78.300988 32,0 0,32.000002 -32,0 z"
+     id="path17"
+     inkscape:connector-curvature="0"
+     style="fill:#fce5cd;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 83.040149,114.18225 32.000001,0 0,32.00001 -32.000001,0 z"
+     id="path19"
+     inkscape:connector-curvature="0"
+     style="fill:#cfe2f3;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 119.04015,114.30099 32,0 0,32 -32,0 z"
+     id="path21"
+     inkscape:connector-curvature="0"
+     style="fill:#fce5cd;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 155.04015,114.30099 32,0 0,32 -32,0 z"
+     id="path23"
+     inkscape:connector-curvature="0"
+     style="fill:#cfe2f3;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 103.19026,94.300978 8.853,-3.03965 0,3.03965 22.9969,0 0,-23.01197 -3.04484,0 3.04484,-8.837911 3.04484,8.837911 -3.04484,0 0,23.01197 22.9969,0 0,-3.03965 8.85298,3.03965 -8.85298,3.03966 0,-3.03966 -22.9969,0 0,23.011992 3.04484,0 -3.04484,8.83791 -3.04484,-8.83791 3.04484,0 0,-23.011992 -22.9969,0 0,3.03966 z"
+     id="path25"
+     inkscape:connector-curvature="0"
+     style="fill:#073763;fill-rule:nonzero;stroke:#073763;stroke-width:2.3002212;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     d="m 119.04015,78.300988 32,0 0,32.000002 -32,0 z"
+     id="path15"
+     inkscape:connector-curvature="0"
+     style="fill:#d9ead3;fill-rule:nonzero;stroke:#073763;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round"
+     inkscape:export-filename="/home/nopper/skippy/doc/imgs/part-elem.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+</svg>

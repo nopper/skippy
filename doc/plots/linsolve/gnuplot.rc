@@ -1,0 +1,81 @@
+set autoscale
+set terminal png
+
+unset log
+unset label
+
+set grid
+set xtic 0, 1
+set ytic auto
+set xtics nomirror
+set ytics nomirror
+
+set xlabel "Node degree (n)"
+set ylabel "Completion time (s)"
+
+set output "tc-3000.png"
+set title "Completion time for 3000x3000"
+plot "collate-3000" using 1:2 title 'Ideal' with lines, \
+     "collate-3000" using 1:3 title 'Cost model' with lines, \
+     "collate-3000" using 1:4 title 'Collected' with lines;
+
+set output "tc-4000.png"
+set title "Completion time for 4000x4000"
+plot "collate-4000" using 1:2 title 'Ideal' with lines, \
+     "collate-4000" using 1:3 title 'Cost model' with lines, \
+     "collate-4000" using 1:4 title 'Collected' with lines;
+
+set ylabel "Scalability"
+set key right bottom
+
+set output "scal-3000.png"
+set title "Scalability for 3000x3000"
+plot "collate-3000" using 1:9 title 'Theoretical' with lines, \
+     "collate-3000" using 1:10 title 'Collected' with lines;
+
+set output "scal-4000.png"
+set title "Scalability for 4000x4000"
+plot "collate-4000" using 1:9 title 'Theoretical' with lines, \
+     "collate-4000" using 1:10 title 'Collected' with lines;
+
+set ylabel "Speedup"
+set key right bottom
+
+set output "speed-3000.png"
+set title "Speedup for 3000x3000"
+plot "collate-3000" using 1:7 title 'Theoretical' with lines, \
+     "collate-3000" using 1:8 title 'Collected' with lines;
+
+set output "speed-4000.png"
+set title "Speedup for 4000x4000"
+plot "collate-4000" using 1:7 title 'Theoretical' with lines, \
+     "collate-4000" using 1:8 title 'Collected' with lines;
+
+set ylabel "Bandwidth 1/s"
+
+set output "bw-3000.png"
+set title "Bandwidth for 3000x3000"
+plot "collate-3000" using 1:11 title 'Ideal' with lines, \
+     "collate-3000" using 1:12 title 'Cost model' with lines, \
+     "collate-3000" using 1:13 title 'Collected' with lines;
+
+set output "bw-4000.png"
+set title "Bandwidth for 4000x4000"
+plot "collate-4000" using 1:11 title 'Ideal' with lines, \
+     "collate-4000" using 1:12 title 'Cost model' with lines, \
+     "collate-4000" using 1:13 title 'Collected' with lines;
+
+set ylabel "Efficiency"
+set yrange [0:1]
+set key left bottom
+
+set output "eff-3000.png"
+set title "Efficiency for 3000x3000"
+plot "collate-3000" using 1:5 title 'Theoretical' with lines, \
+     "collate-3000" using 1:6 title 'Collected' with lines;
+
+set output "eff-4000.png"
+set title "Efficiency for 4000x4000"
+plot "collate-4000" using 1:5 title 'Theoretical' with lines, \
+     "collate-4000" using 1:6 title 'Collected' with lines;
+

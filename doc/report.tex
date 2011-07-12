@@ -1,0 +1,97 @@
+\documentclass[a4paper,11pt,twoside]{article}
+\usepackage{graphicx,xltxtra,listings,tabularx,enumitem,amsmath,subfigure,color,fullpage,minted,fancyhdr}
+\usepackage{wrapfig}
+\setmonofont[Scale=MatchLowercase]{Consolas}
+
+% Header
+\setlength{\headheight}{12pt}
+\setlength{\headsep}{10pt}
+
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0.5pt}
+%\lfoot{\copyright~Francesco Piccinno}
+
+\usepackage[xetex]{hyperref}
+\hypersetup{
+    bookmarks=true,
+    pdftoolbar=true,
+    pdfmenubar=true,
+    pdffitwindow=true,
+    pdfstartview={FitH},
+    pdftitle={Stencil Skeleton - Evaluation Report},
+    pdfauthor={Francesco Piccinno},
+    pdfsubject={Stencil Skeleton},
+    pdfkeywords={Stencil} {Skeleton} {Parallel},
+    pdfnewwindow=true,
+    colorlinks=false,
+    linkcolor=red,
+    citecolor=green,
+    filecolor=magenta,
+    urlcolor=cyan
+}
+
+\definecolor{colKeys}{rgb}{0,0,1} 
+\definecolor{colIdentifier}{rgb}{0,0,0} 
+\definecolor{colComments}{RGB}{63,127,95}
+\definecolor{colString}{rgb}{0.6,0.1,0.1}
+\definecolor{colBackground}{rgb}{1,1,1}
+
+\lstset{
+    language=Python,
+    basicstyle=\footnotesize\ttfamily,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    tabsize=2,
+    extendedchars=true,
+    breaklines=true,
+    keywordstyle=\color{colKeys},
+    identifierstyle=\color{colIdentifier},
+    frame=b,
+    stringstyle=\color{colString},
+    commentstyle=\color{colComments},
+    showspaces=false,
+    showtabs=false,
+    xleftmargin=0pt,
+    framexleftmargin=0pt,
+    framexrightmargin=0pt,
+    framexbottommargin=4pt,
+    backgroundcolor=\color{colBackground},
+    showstringspaces=false,
+    lineskip={-1.5pt}
+}
+\lstloadlanguages{Python}
+
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox[cmyk]{0.43, 0.35,
+0.35,0.01}{\parbox{1\textwidth}{\hspace{15pt}#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white, singlelinecheck=false, margin=0pt, font={bf,footnotesize}}
+
+\newcommand\eg{\textsl{eg.}\ }
+
+% Exponential notation
+\providecommand{\e}[1]{\ensuremath{\cdot 10^{#1}}}
+
+\renewcommand\thefootnote{\arabic{footnote}}
+\makeindex
+\title{Stencil Skeleton Evaluation}
+\author{Francesco Piccinno
+\texttt{<\href{mailto:stack.box@gmail.com}{stack.box@gmail.com}>}}
+
+\begin{document}
+\thispagestyle{empty}
+\maketitle
+{\small\tableofcontents}
+{\small\listoffigures}
+{\small\listoftables}
+{\small\listoflistings}
+
+\clearpage
+\thispagestyle{empty}
+\include{chap1}
+
+\bibliographystyle{ieeetr}
+\bibliography{sources}
+
+\end{document}
