@@ -1,0 +1,31 @@
+# Stencil skeleton evaluation
+
+The stencil skeleton is a particular data-parallel computation in which
+data dependence pattern is implemented by means of inter-worker
+communications.
+
+A stencil is a gather in which all memory addresses used for reads are
+expressed as offsets relative to the location of a collection of
+outputs. Suppose we have an input array A, an output array B, and a set
+of integer offsets P. Then for every index k in the output array, we
+read from every input in A given by k + p for every p in P. Note that
+the index values in P may be multidimensional if the inputs and outputs
+are multidimensional. A stencil accesses a regular neighborhood of the
+input for each output.
+
+The stencil pattern appears in a number of applications, but most
+notably in image processing and simulation. A wide variety of linear and
+non-linear image processing operations are specified using stencils,
+including linear convolution and non-linear noise reduction. Explicit
+solutions to partial differential equations, used in simulation and
+seismic reconstruction as well as in image processing, use iterative
+applications of stencil operations.
+
+# Implementation notes
+
+The implementation of the skeleton is entirely in Python and MPI. I have
+used mpi4py package and numpy for the matrix representation. The tests
+were run on top of a cluster of multicores machines using MPICHv1.
+Please refer to the official page of [mpi4py](http://mpi4py.scipy.org)
+package for further information regarding how to set up the proper
+testing environment.
